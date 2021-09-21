@@ -1,4 +1,6 @@
+#!/usr/bin/env node
+
 import { setupArgs } from './cli/core/args';
-import { main } from './cli/main';
+import { main } from './cli';
 
 setupArgs().then(main);
