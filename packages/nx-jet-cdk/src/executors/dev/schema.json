@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "title": "Jet dev executor",
+  "description": "Runs jet dev",
+  "type": "object",
+  "properties": {
+    "stage": {
+      "type": "string",
+      "description": "Stage to use for development"
+    },
+    "config": {
+      "type": "string",
+      "description": "Configuration file to read from",
+      "alias": "c"
+    },
+    "out-dir": {
+      "type": "string",
+      "description": "Output directory for jet data",
+      "alias": "o"
+    },
+    "synth-args": {
+      "type": "string",
+      "description": "Extra arguments to cdk synth"
+    },
+    "deploy-args": {
+      "type": "string",
+      "description": "Extra arguments to cdk deploy"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

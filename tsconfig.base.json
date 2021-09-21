@@ -15,10 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "nx-jet-cdk": ["packages/nx-jet-cdk/src/index.ts"],
-      "jet-cdk": ["packages/jet-cdk/src/index.ts"]
+      "jet-cdk/fly": ["packages/jet-cdk/src/fly/index.ts"],
+      "jet-cdk/payload": ["packages/jet-cdk/src/payload/index.ts"],
+      "nx-jet-cdk": ["packages/nx-jet-cdk/src/index.ts"]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true
   },
   "exclude": ["node_modules", "tmp"]
 }
