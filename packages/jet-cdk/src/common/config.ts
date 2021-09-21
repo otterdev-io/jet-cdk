@@ -1,21 +1,21 @@
-import { cosmiconfig, cosmiconfigSync } from "cosmiconfig";
-import { LoadersSync } from "cosmiconfig/dist/types";
-import json5 from "json5";
-import merge from "deepmerge";
-import fs from "fs/promises";
-import { STS } from "@aws-sdk/client-sts";
-import os from "os";
+import { cosmiconfig } from 'cosmiconfig';
+import { LoadersSync } from 'cosmiconfig/dist/types';
+import json5 from 'json5';
+import merge from 'deepmerge';
+import fs from 'fs/promises';
+import { STS } from '@aws-sdk/client-sts';
+import os from 'os';
 
 export const DefaultConfig = {
   user: undefined as string | undefined,
-  outDir: ".jet",
+  outDir: '.jet',
   dev: {
     stage: undefined as string | undefined,
     watcher: {
-      watch: ["lib/**/*"],
-      ignore: ["node_modules"],
+      watch: ['lib/**/*'],
+      ignore: ['node_modules'],
     },
-    synthArgs: ["-q"],
+    synthArgs: ['-q'],
     deployArgs: [] as string[],
   },
   deploy: {
@@ -24,8 +24,8 @@ export const DefaultConfig = {
   },
 };
 
-export const DefaultUserConfigPath = ".jetrc.json5";
-export const DefaultConfigPath = "jet.config.json5";
+export const DefaultUserConfigPath = '.jetrc.json5';
+export const DefaultConfigPath = 'jet.config.json5';
 
 export type BaseConfig = typeof DefaultConfig;
 export type BaseConfigWithUser = BaseConfig & { user: string };
@@ -41,15 +41,15 @@ export async function loadConfig(
   path: string | undefined
 ): Promise<BaseConfigWithUser> {
   const loaders: LoadersSync = {
-    ".json5": (_path, content) => json5.parse(content),
+    '.json5': (_path, content) => json5.parse(content),
   };
-  const personalResult = await cosmiconfig("jet", {
+  const personalResult = await cosmiconfig('jet', {
     loaders,
-    searchPlaces: [".jetrc.json5", ".jetrc", ".jetrc.json"],
+    searchPlaces: ['.jetrc.json5', '.jetrc', '.jetrc.json'],
   }).search();
-  const mainExplorer = cosmiconfig("jet", {
+  const mainExplorer = cosmiconfig('jet', {
     loaders,
-    searchPlaces: ["jetrc.json5", "jetrc.json"],
+    searchPlaces: ['jetrc.json5', 'jetrc.json'],
   });
   const mainResult = await (path
     ? mainExplorer.load(path)
@@ -68,7 +68,7 @@ export async function checkUser(
 ): Promise<BaseConfigWithUser> {
   if (!config.user) {
     console.log(
-      "No user detected in config. Creating a personal config using IAM or OS username."
+      'No user detected in config. Creating a personal config using IAM or OS username.'
     );
     const username = await getUserName();
     const userConfig = {
@@ -93,8 +93,8 @@ async function getUserName(): Promise<string> {
     identityArn = (await new STS({}).getCallerIdentity({})).Arn;
   } catch (e) {
     console.warn(`AWS Error: ${(e as Error).message}\n`);
-    console.warn("Unable to read IAM identity. Falling back to OS username.");
+    console.warn('Unable to read IAM identity. Falling back to OS username.');
   }
-  const iamUser = identityArn ? identityArn.split("/")[1] : undefined;
+  const iamUser = identityArn ? identityArn.split('/')[1] : undefined;
   return iamUser ?? os.userInfo().username;
 }
