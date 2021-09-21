@@ -1,0 +1,6 @@
+{
+  "name": "@jet-cdk/nx-jet-cdk",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "executors": "./executors.json"
+}
