@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "nx-jet-cdk",
+  "version": "0.0.1",
+  "generators": {
+    "cdk-app-with-jet": {
+      "factory": "./src/generators/cdk-app-with-jet/generator",
+      "schema": "./src/generators/cdk-app-with-jet/schema.json",
+      "description": "cdk-app-with-jet generator"
+    }
+  }
+}
