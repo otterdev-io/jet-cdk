@@ -33,6 +33,61 @@
           }
         }
       }
+    },
+    "nx-jet-cdk": {
+      "root": "packages/nx-jet-cdk",
+      "sourceRoot": "packages/nx-jet-cdk/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["packages/nx-jet-cdk/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/packages/nx-jet-cdk"],
+          "options": {
+            "jestConfig": "packages/nx-jet-cdk/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/packages/nx-jet-cdk",
+            "tsConfig": "packages/nx-jet-cdk/tsconfig.lib.json",
+            "packageJson": "packages/nx-jet-cdk/package.json",
+            "main": "packages/nx-jet-cdk/src/index.ts",
+            "assets": [
+              "packages/nx-jet-cdk/*.md",
+              {
+                "input": "./packages/nx-jet-cdk/src",
+                "glob": "**/!(*.ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/nx-jet-cdk/src",
+                "glob": "**/*.d.ts",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/nx-jet-cdk",
+                "glob": "generators.json",
+                "output": "."
+              },
+              {
+                "input": "./packages/nx-jet-cdk",
+                "glob": "executors.json",
+                "output": "."
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {

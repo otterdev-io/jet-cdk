@@ -15,6 +15,9 @@
   "projects": {
     "jet-cdk": {
       "tags": []
+    },
+    "nx-jet-cdk": {
+      "tags": []
     }
   }
 }

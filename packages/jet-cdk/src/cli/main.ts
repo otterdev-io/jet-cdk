@@ -2,39 +2,42 @@ import {
   BaseConfigWithUser,
   BaseConfigWithUserAndCommandStage,
   loadConfig,
-} from "../common/config";
-import { Args } from "./core/args";
-import merge from "deepmerge";
-import cleanDeep from "clean-deep";
-import chalk from "chalk";
-import { listStages } from "./commands/list-stages";
-import { runDev } from "./commands/dev";
-import { runDeploy } from "./commands/deploy";
+} from '../common/config';
+import { Args } from './core/args';
+import merge from 'deepmerge';
+import cleanDeep from 'clean-deep';
+import chalk from 'chalk';
+import { listStages } from './commands/list-stages';
+import { runDev } from './commands/dev';
+import { runDeploy } from './commands/deploy';
 
 export async function main(args: Args) {
   const config = await getMergedConfig(args);
   switch (args.command) {
-    case "dev":
+    case 'dev': {
       if (checkDevStage(config)) {
         await runDev(config, args.config);
       }
       break;
-    case "deploy":
+    }
+    case 'deploy': {
       if (checkDeployStage(config)) {
         runDeploy(config, args.config);
       }
       break;
-    case "list-stages":
+    }
+    case 'list-stages': {
       const stages = listStages(config.outDir, args.config);
       console.info(
         chalk.yellowBright(
-          chalk.bgBlack(chalk.bold("Stages detected from cdk:"))
+          chalk.bgBlack(chalk.bold('Stages detected from cdk:'))
         )
       );
       stages.forEach((s) => {
         console.info(s);
       });
       break;
+    }
   }
 }
 
@@ -66,13 +69,13 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
 
 function checkDevStage(
   config: BaseConfigWithUser
-): config is BaseConfigWithUserAndCommandStage<"dev"> {
+): config is BaseConfigWithUserAndCommandStage<'dev'> {
   return verifyStage(config, config.dev.stage);
 }
 
 function checkDeployStage(
   config: BaseConfigWithUser
-): config is BaseConfigWithUserAndCommandStage<"deploy"> {
+): config is BaseConfigWithUserAndCommandStage<'deploy'> {
   return verifyStage(config, config.deploy.stage);
 }
 
@@ -86,12 +89,12 @@ function verifyStage(
     stageValid = false;
     console.error(
       chalk.redBright(
-        chalk.bgBlack("No stage has been provided, from config or argument.")
+        chalk.bgBlack('No stage has been provided, from config or argument.')
       )
     );
-    console.info("You may:");
-    console.info("- Add stage to your configuration file");
-    console.info("- Provide stage as an argument");
+    console.info('You may:');
+    console.info('- Add stage to your configuration file');
+    console.info('- Provide stage as an argument');
   }
   if (stage && !stages.includes(stage)) {
     stageValid = false;
@@ -101,7 +104,7 @@ function verifyStage(
   }
   if (!stageValid) {
     console.info(
-      chalk.yellowBright(chalk.bgBlack(chalk.bold("\nAvailable stages:")))
+      chalk.yellowBright(chalk.bgBlack(chalk.bold('\nAvailable stages:')))
     );
     stages.forEach((s) => {
       console.info(s);

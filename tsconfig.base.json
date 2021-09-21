@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "nx-jet-cdk": ["packages/nx-jet-cdk/src/index.ts"],
       "jet-cdk": ["packages/jet-cdk/src/index.ts"]
     },
     "esModuleInterop": true

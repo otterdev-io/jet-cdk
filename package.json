@@ -6,10 +6,12 @@
   "private": true,
   "devDependencies": {
     "@nrwl/cli": "12.9.0",
+    "@nrwl/devkit": "12.9.0",
     "@nrwl/eslint-plugin-nx": "12.9.0",
     "@nrwl/jest": "12.9.0",
     "@nrwl/linter": "12.9.0",
     "@nrwl/node": "^12.9.0",
+    "@nrwl/nx-plugin": "^12.9.0",
     "@nrwl/tao": "12.9.0",
     "@nrwl/workspace": "12.9.0",
     "@types/jest": "26.0.24",
@@ -21,11 +23,13 @@
     "jest": "27.0.3",
     "prettier": "^2.3.1",
     "ts-jest": "27.0.3",
+    "tslib": "^2.0.0",
     "typescript": "~4.3.5"
   },
   "dependencies": {
     "@aws-sdk/client-sts": "^3.33.0",
     "chalk": "^4.1.2",
+    "clean-deep": "^3.4.0",
     "cosmiconfig": "^7.0.1",
     "deepmerge": "^4.2.2",
     "json5": "^2.2.0",
