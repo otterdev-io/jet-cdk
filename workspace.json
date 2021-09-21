@@ -1,6 +1,40 @@
 {
   "version": 2,
-  "projects": {},
+  "projects": {
+    "jet-cdk": {
+      "root": "packages/jet-cdk",
+      "sourceRoot": "packages/jet-cdk/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/packages/jet-cdk",
+            "tsConfig": "packages/jet-cdk/tsconfig.lib.json",
+            "packageJson": "packages/jet-cdk/package.json",
+            "main": "packages/jet-cdk/src/index.ts",
+            "assets": ["packages/jet-cdk/*.md"]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["packages/jet-cdk/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/packages/jet-cdk"],
+          "options": {
+            "jestConfig": "packages/jet-cdk/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   }
