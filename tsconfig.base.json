@@ -16,8 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@jet-cdk/jet": ["packages/jet/src/index.ts"],
-      "@jet-cdk/jet/fly": ["packages/jet/src/fly/index.ts"],
-      "@jet-cdk/nx-plugin": ["packages/nx-plugin/src/index.ts"]
+      "@jet-cdk/jet-nx": ["packages/jet-nx/src/index.ts"],
+      "@jet-cdk/jet/fly": ["packages/jet/src/fly/index.ts"]
     },
     "esModuleInterop": true,
     "strict": true
