@@ -7,7 +7,11 @@
   "properties": {
     "stage": {
       "type": "string",
-      "description": "Stage to use for development"
+      "description": "Stage to use for development",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
     },
     "config": {
       "type": "string",
