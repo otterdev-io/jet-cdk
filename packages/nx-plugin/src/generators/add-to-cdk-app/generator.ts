@@ -1,58 +1,30 @@
 import {
-  addProjectConfiguration,
-  formatFiles,
-  generateFiles,
-  getWorkspaceLayout,
-  names,
-  offsetFromRoot,
+  readProjectConfiguration,
   Tree,
+  updateProjectConfiguration,
 } from '@nrwl/devkit';
-import * as path from 'path';
+import { DevExecutorSchema } from '../../executors/dev/schema';
 import { AddToCdkAppGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends AddToCdkAppGeneratorSchema {
-  projectName: string;
+  project: string;
   projectRoot: string;
-  projectDirectory: string;
-  parsedTags: string[];
+  outDir: string;
 }
 
 function normalizeOptions(
   tree: Tree,
   options: AddToCdkAppGeneratorSchema
 ): NormalizedSchema {
-  const name = names(options.name).fileName;
-  const projectDirectory = options.directory
-    ? `${names(options.directory).fileName}/${name}`
-    : name;
-  const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-');
-  const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${projectDirectory}`;
-  const parsedTags = options.tags
-    ? options.tags.split(',').map((s) => s.trim())
-    : [];
+  const { root: projectRoot } = readProjectConfiguration(tree, options.project);
+  const outDir = `dist/${projectRoot}/.jet`;
 
   return {
     ...options,
-    projectName,
+    project: options.project,
     projectRoot,
-    projectDirectory,
-    parsedTags,
+    outDir,
   };
-}
-
-function addFiles(tree: Tree, options: NormalizedSchema) {
-  const templateOptions = {
-    ...options,
-    ...names(options.name),
-    offsetFromRoot: offsetFromRoot(options.projectRoot),
-    template: '',
-  };
-  generateFiles(
-    tree,
-    path.join(__dirname, 'files'),
-    options.projectRoot,
-    templateOptions
-  );
 }
 
 export default async function (
@@ -60,17 +32,16 @@ export default async function (
   options: AddToCdkAppGeneratorSchema
 ) {
   const normalizedOptions = normalizeOptions(tree, options);
-  addProjectConfiguration(tree, normalizedOptions.projectName, {
+  updateProjectConfiguration(tree, normalizedOptions.project, {
     root: normalizedOptions.projectRoot,
-    projectType: 'library',
-    sourceRoot: `${normalizedOptions.projectRoot}/src`,
     targets: {
       dev: {
-        executor: '@jet-cdk/nx-jet-cdk:build',
+        executor: '@jet-cdk/nx-plugin:dev',
+        options: {
+          config: `${normalizedOptions.projectRoot}/jet.config.json5`,
+          'out-dir': normalizedOptions.outDir,
+        } as DevExecutorSchema,
       },
     },
-    tags: normalizedOptions.parsedTags,
   });
-  addFiles(tree, normalizedOptions);
-  await formatFiles(tree);
 }
