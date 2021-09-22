@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "generators": {
+    "jet-cdk-app": {
+      "factory": "./src/generators/jet-cdk-app/generator",
+      "schema": "./src/generators/jet-cdk-app/schema.json",
+      "description": "jet-cdk-app generator"
+    },
+    "add-to-cdk-app": {
+      "factory": "./src/generators/add-to-cdk-app/generator",
+      "schema": "./src/generators/add-to-cdk-app/schema.json",
+      "description": "add-to-cdk-app generator"
+    }
+  }
+}
