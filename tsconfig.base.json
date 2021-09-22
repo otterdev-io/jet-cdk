@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "jet-cdk/fly": ["packages/jet-cdk/src/fly/index.ts"],
-      "jet-cdk/payload": ["packages/jet-cdk/src/payload/index.ts"],
-      "nx-jet-cdk": ["packages/nx-jet-cdk/src/index.ts"]
+      "@jet-cdk/jet": ["packages/jet/src/index.ts"],
+      "@jet-cdk/jet/fly": ["packages/jet/src/fly/index.ts"],
+      "@jet-cdk/nx-plugin": ["packages/nx-plugin/src/index.ts"]
     },
     "esModuleInterop": true,
     "strict": true

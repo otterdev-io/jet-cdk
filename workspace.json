@@ -1,56 +1,56 @@
 {
   "version": 2,
   "projects": {
-    "jet-cdk": {
-      "root": "packages/jet-cdk",
-      "sourceRoot": "packages/jet-cdk/src",
+    "jet": {
+      "root": "packages/jet",
+      "sourceRoot": "packages/jet/src",
       "projectType": "library",
       "targets": {
         "build": {
           "executor": "@nrwl/node:package",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/packages/jet-cdk",
-            "tsConfig": "packages/jet-cdk/tsconfig.lib.json",
-            "packageJson": "packages/jet-cdk/package.json",
-            "main": "packages/jet-cdk/src/index.ts",
-            "assets": ["packages/jet-cdk/*.md"]
+            "outputPath": "dist/packages/jet",
+            "tsConfig": "packages/jet/tsconfig.lib.json",
+            "packageJson": "packages/jet/package.json",
+            "main": "packages/jet/src/index.ts",
+            "assets": ["packages/jet/*.md"]
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["packages/jet-cdk/**/*.ts"]
+            "lintFilePatterns": ["packages/jet/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/packages/jet-cdk"],
+          "outputs": ["coverage/packages/jet"],
           "options": {
-            "jestConfig": "packages/jet-cdk/jest.config.js",
+            "jestConfig": "packages/jet/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "nx-jet-cdk": {
-      "root": "packages/nx-jet-cdk",
-      "sourceRoot": "packages/nx-jet-cdk/src",
+    "nx-plugin": {
+      "root": "packages/nx-plugin",
+      "sourceRoot": "packages/nx-plugin/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["packages/nx-jet-cdk/**/*.ts"]
+            "lintFilePatterns": ["packages/nx-plugin/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/packages/nx-jet-cdk"],
+          "outputs": ["coverage/packages/nx-plugin"],
           "options": {
-            "jestConfig": "packages/nx-jet-cdk/jest.config.js",
+            "jestConfig": "packages/nx-plugin/jest.config.js",
             "passWithNoTests": true
           }
         },
@@ -58,29 +58,29 @@
           "executor": "@nrwl/node:package",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/packages/nx-jet-cdk",
-            "tsConfig": "packages/nx-jet-cdk/tsconfig.lib.json",
-            "packageJson": "packages/nx-jet-cdk/package.json",
-            "main": "packages/nx-jet-cdk/src/index.ts",
+            "outputPath": "dist/packages/nx-plugin",
+            "tsConfig": "packages/nx-plugin/tsconfig.lib.json",
+            "packageJson": "packages/nx-plugin/package.json",
+            "main": "packages/nx-plugin/src/index.ts",
             "assets": [
-              "packages/nx-jet-cdk/*.md",
+              "packages/nx-plugin/*.md",
               {
-                "input": "./packages/nx-jet-cdk/src",
+                "input": "./packages/nx-plugin/src",
                 "glob": "**/!(*.ts)",
                 "output": "./src"
               },
               {
-                "input": "./packages/nx-jet-cdk/src",
+                "input": "./packages/nx-plugin/src",
                 "glob": "**/*.d.ts",
                 "output": "./src"
               },
               {
-                "input": "./packages/nx-jet-cdk",
+                "input": "./packages/nx-plugin",
                 "glob": "generators.json",
                 "output": "."
               },
               {
-                "input": "./packages/nx-jet-cdk",
+                "input": "./packages/nx-plugin",
                 "glob": "executors.json",
                 "output": "."
               }

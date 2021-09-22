@@ -13,10 +13,10 @@
     }
   },
   "projects": {
-    "jet-cdk": {
+    "jet": {
       "tags": []
     },
-    "nx-jet-cdk": {
+    "nx-plugin": {
       "tags": []
     }
   }
