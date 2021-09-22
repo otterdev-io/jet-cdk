@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'nx-plugin',
+  displayName: 'jet-nx',
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/packages/nx-plugin',
+  coverageDirectory: '../../coverage/packages/jet-nx',
 };

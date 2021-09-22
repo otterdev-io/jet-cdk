@@ -34,23 +34,23 @@
         }
       }
     },
-    "nx-plugin": {
-      "root": "packages/nx-plugin",
-      "sourceRoot": "packages/nx-plugin/src",
+    "jet-nx": {
+      "root": "packages/jet-nx",
+      "sourceRoot": "packages/jet-nx/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["packages/nx-plugin/**/*.ts"]
+            "lintFilePatterns": ["packages/jet-nx/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/packages/nx-plugin"],
+          "outputs": ["coverage/packages/jet-nx"],
           "options": {
-            "jestConfig": "packages/nx-plugin/jest.config.js",
+            "jestConfig": "packages/jet-nx/jest.config.js",
             "passWithNoTests": true
           }
         },
@@ -58,29 +58,29 @@
           "executor": "@nrwl/node:package",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/packages/nx-plugin",
-            "tsConfig": "packages/nx-plugin/tsconfig.lib.json",
-            "packageJson": "packages/nx-plugin/package.json",
-            "main": "packages/nx-plugin/src/index.ts",
+            "outputPath": "dist/packages/jet-nx",
+            "tsConfig": "packages/jet-nx/tsconfig.lib.json",
+            "packageJson": "packages/jet-nx/package.json",
+            "main": "packages/jet-nx/src/index.ts",
             "assets": [
-              "packages/nx-plugin/*.md",
+              "packages/jet-nx/*.md",
               {
-                "input": "./packages/nx-plugin/src",
+                "input": "./packages/jet-nx/src",
                 "glob": "**/!(*.ts)",
                 "output": "./src"
               },
               {
-                "input": "./packages/nx-plugin/src",
+                "input": "./packages/jet-nx/src",
                 "glob": "**/*.d.ts",
                 "output": "./src"
               },
               {
-                "input": "./packages/nx-plugin",
+                "input": "./packages/jet-nx",
                 "glob": "generators.json",
                 "output": "."
               },
               {
-                "input": "./packages/nx-plugin",
+                "input": "./packages/jet-nx",
                 "glob": "executors.json",
                 "output": "."
               }
