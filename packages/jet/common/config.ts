@@ -67,12 +67,12 @@ export async function loadConfig(
     mainResult?.config ?? {},
     personalResult?.config ?? {},
   ]);
-  return checkUser(result, configPath);
+  return checkUser(result, projectDir);
 }
 
 export async function checkUser(
   config: BaseConfig,
-  path: string | undefined
+  projectDir: string | undefined
 ): Promise<BaseConfigWithUser> {
   if (!config.user) {
     console.log(
@@ -83,7 +83,9 @@ export async function checkUser(
       user: username,
     };
     await fs.writeFile(
-      path ?? DefaultUserConfigPath,
+      projectDir
+        ? path.join(projectDir, DefaultUserConfigPath)
+        : DefaultConfigPath,
       json5.stringify(userConfig, undefined, 2)
     );
     return merge<BaseConfig, typeof userConfig>(config, userConfig);

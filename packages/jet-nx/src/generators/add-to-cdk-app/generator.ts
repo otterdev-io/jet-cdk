@@ -50,9 +50,11 @@ export default async function (
   options: AddToCdkAppGeneratorSchema
 ) {
   const normalizedOptions = normalizeOptions(tree, options);
+  const config = readProjectConfiguration(tree, normalizedOptions.project);
   updateProjectConfiguration(tree, normalizedOptions.project, {
     root: normalizedOptions.projectRoot,
     targets: {
+      ...(config.targets ?? {}),
       dev: {
         executor: '@jet-cdk/jet-nx:dev',
         options: {

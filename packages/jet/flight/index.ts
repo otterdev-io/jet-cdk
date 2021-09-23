@@ -19,22 +19,25 @@ export async function flight(args: Args) {
   const config = merge<BaseConfigWithUser>(mergedConfig, {
     outDir: path.resolve(mergedConfig.outDir),
   });
-
   switch (args.command) {
     case 'dev': {
-      if (checkDevStage(config)) {
+      if (checkDevStage(config, configFilePath)) {
         await runDev(config, configFilePath);
       }
       break;
     }
     case 'deploy': {
-      if (checkDeployStage(config)) {
+      if (checkDeployStage(config, configFilePath)) {
         runDeploy(config, configFilePath);
       }
       break;
     }
     case 'list-stages': {
-      const stages = listStages(config.projectDir, config.outDir, args.config);
+      const stages = listStages(
+        config.projectDir,
+        config.outDir,
+        configFilePath
+      );
       console.info(
         chalk.yellowBright(
           chalk.bgBlack(chalk.bold('Stages detected from cdk:'))
@@ -76,22 +79,25 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
 }
 
 function checkDevStage(
-  config: BaseConfigWithUser
+  config: BaseConfigWithUser,
+  configFilePath: string | undefined
 ): config is BaseConfigWithUserAndCommandStage<'dev'> {
-  return verifyStage(config, config.dev.stage);
+  return verifyStage(config, config.dev.stage, configFilePath);
 }
 
 function checkDeployStage(
-  config: BaseConfigWithUser
+  config: BaseConfigWithUser,
+  configFilePath: string | undefined
 ): config is BaseConfigWithUserAndCommandStage<'deploy'> {
-  return verifyStage(config, config.deploy.stage);
+  return verifyStage(config, config.deploy.stage, configFilePath);
 }
 
 function verifyStage(
   config: BaseConfigWithUser,
-  stage: string | undefined
+  stage: string | undefined,
+  configFilePath: string | undefined
 ): boolean {
-  const stages = listStages(config.projectDir, config.outDir, config.user);
+  const stages = listStages(config.projectDir, config.outDir, configFilePath);
   let stageValid = true;
   if (!stage) {
     stageValid = false;

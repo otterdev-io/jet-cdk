@@ -53,6 +53,7 @@ export function doDeploy(
   configFile: string | undefined
 ) {
   const outPath = outFilePath(config.outDir);
+  console.log(outPath);
   return runCdk('deploy', {
     cwd: config.projectDir,
     jetOutDir: config.outDir,

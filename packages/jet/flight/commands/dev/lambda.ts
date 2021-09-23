@@ -36,8 +36,11 @@ export async function processLambdas(
     console.info(chalk.bold('No stacks'));
     usagePrompt();
   }
-  Object.values(stacks).forEach(async (stack) => {
-    console.info(chalk.bold('\nStack outputs (jet hidden):'));
+
+  Object.entries(stacks).forEach(async ([stackName, stack]) => {
+    console.log();
+    console.info(chalk.bold(stackName));
+    console.info(chalk.bold('Stack outputs (jet hidden):'));
     const { jet, ...rest } = stack;
     Object.entries(rest).forEach(([key, value]) => {
       console.info(chalk.blueBright(chalk.bgBlack(`${key}: ${value}`)));
@@ -76,17 +79,23 @@ export async function processLambdas(
   //Deduplicate by id
   const stackFunctionsDict = new Map(stackFunctions);
 
-  return Promise.all(
-    [...stackFunctionsDict.values()].map(
-      async ({ stackName, assemblyOutDir, fn }) => {
-        if (doUpload) {
-          console.info(`Uploading ${fn.name}`);
-          await upload(stackName, assemblyOutDir, fn);
+  if ([...stackFunctionsDict.keys()].length === 0) {
+    console.info('Redeploy once you have some lambdas');
+    usagePrompt();
+    return [];
+  } else {
+    return Promise.all(
+      [...stackFunctionsDict.values()].map(
+        async ({ stackName, assemblyOutDir, fn }) => {
+          if (doUpload) {
+            console.info(`Uploading ${fn.name}`);
+            await upload(stackName, assemblyOutDir, fn);
+          }
+          return tailLogs(fn);
         }
-        return tailLogs(fn);
-      }
-    )
-  );
+      )
+    );
+  }
 }
 
 async function upload(
@@ -146,8 +155,13 @@ async function updateLambda(zip: Uint8Array, fn: DeployedFunction) {
 }
 
 async function getStacks(outDir: string): Promise<Record<string, Stack>> {
-  const outputsFile = await fsp.readFile(outFilePath(outDir), 'utf-8');
-  return JSON.parse(outputsFile);
+  try {
+    const outputsFile = await fsp.readFile(outFilePath(outDir), 'utf-8');
+    return JSON.parse(outputsFile);
+  } catch (e) {
+    console.error(chalk.bgBlack(chalk.red(e)));
+    return {};
+  }
 }
 
 export async function lambdasNeedUploading(
