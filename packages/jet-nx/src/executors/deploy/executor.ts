@@ -14,6 +14,7 @@ export default async function runExecutor(options: DeployExecutorSchema) {
       success: true,
     };
   } catch (e) {
+    console.error(e);
     return {
       success: false,
     };

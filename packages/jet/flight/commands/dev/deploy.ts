@@ -54,6 +54,7 @@ export function doDeploy(
 ) {
   const outPath = outFilePath(config.outDir);
   return runCdk('deploy', {
+    cwd: config.projectDir,
     jetOutDir: config.outDir,
     context: cleanDeep({ dev: 'true', 'config-file': configFile }),
     args: [

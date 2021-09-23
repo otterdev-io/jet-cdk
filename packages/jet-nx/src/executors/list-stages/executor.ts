@@ -12,6 +12,7 @@ export default async function runExecutor(options: ListStagesExecutorSchema) {
       success: true,
     };
   } catch (e) {
+    console.error(e);
     return { success: false };
   }
 }

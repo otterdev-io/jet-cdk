@@ -10,6 +10,7 @@ export type Args = {
   deployArgs?: string[];
   config?: string;
   outDir?: string;
+  projectDir?: string;
 };
 
 export async function setupArgs(): Promise<Args> {
@@ -50,6 +51,11 @@ export async function setupArgs(): Promise<Args> {
       alias: 'o',
       type: 'string',
       description: 'Output directory for jet data [.jet]',
+    })
+    .option('project-dir', {
+      alias: 'p',
+      type: 'string',
+      description: 'Base directory of the project [.]',
     }).argv;
 
   return {
@@ -59,5 +65,6 @@ export async function setupArgs(): Promise<Args> {
     deployArgs: args['deploy-args'] as string[],
     config: args.config,
     outDir: args['out-dir'],
+    projectDir: args['project-dir'],
   };
 }

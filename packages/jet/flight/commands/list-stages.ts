@@ -1,11 +1,16 @@
 import cleanDeep from 'clean-deep';
 import { runCdk } from '../core/run-cdk';
 
-export function listStages(outDir: string, configFile: string | undefined) {
+export function listStages(
+  projectDir: string,
+  outDir: string,
+  configFile: string | undefined
+) {
   return runCdk('list', {
     jetOutDir: outDir,
     context: cleanDeep({ 'config-file': configFile }),
     stdio: 'pipe',
+    cwd: projectDir,
   })
     .stdout.toString()
     .trim()

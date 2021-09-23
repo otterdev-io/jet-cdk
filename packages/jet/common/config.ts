@@ -5,10 +5,15 @@ import merge from 'deepmerge';
 import fs from 'fs/promises';
 import { STS } from '@aws-sdk/client-sts';
 import os from 'os';
+import path from 'path';
+
+export const DefaultOutDir = '.jet';
+export const DefaultUserConfigPath = '.jetrc.json5';
+export const DefaultConfigPath = 'jet.config.json5';
 
 export const DefaultConfig = {
   user: undefined as string | undefined,
-  outDir: '.jet',
+  outDir: DefaultOutDir,
   dev: {
     stage: undefined as string | undefined,
     watcher: {
@@ -22,10 +27,8 @@ export const DefaultConfig = {
     stage: undefined as string | undefined,
     deployArgs: [] as string[],
   },
+  projectDir: '.',
 };
-
-export const DefaultUserConfigPath = '.jetrc.json5';
-export const DefaultConfigPath = 'jet.config.json5';
 
 export type BaseConfig = typeof DefaultConfig;
 export type BaseConfigWithUser = BaseConfig & { user: string };
@@ -38,7 +41,8 @@ export type BaseConfigWithUserAndCommandStage<T extends string> =
  * @param path Path to main file to load
  */
 export async function loadConfig(
-  path: string | undefined
+  projectDir: string | undefined,
+  configPath: string | undefined
 ): Promise<BaseConfigWithUser> {
   const loaders: LoadersSync = {
     '.json5': (_path, content) => json5.parse(content),
@@ -46,20 +50,24 @@ export async function loadConfig(
   const personalResult = await cosmiconfig('jet', {
     loaders,
     searchPlaces: ['.jetrc.json5', '.jetrc', '.jetrc.json'],
-  }).search();
+  }).search(projectDir);
   const mainExplorer = cosmiconfig('jet', {
     loaders,
     searchPlaces: ['jet.config.json5', 'jet.config.json'],
   });
-  const mainResult = await (path
-    ? mainExplorer.load(path)
-    : mainExplorer.search());
+  const mainResult = await (configPath
+    ? mainExplorer.load(configPath)
+    : mainExplorer.search(projectDir));
   const result = merge.all<BaseConfig>([
     DefaultConfig,
+    {
+      projectDir,
+      outDir: projectDir ? path.join(projectDir, DefaultOutDir) : DefaultOutDir,
+    },
     mainResult?.config ?? {},
     personalResult?.config ?? {},
   ]);
-  return checkUser(result, path);
+  return checkUser(result, configPath);
 }
 
 export async function checkUser(

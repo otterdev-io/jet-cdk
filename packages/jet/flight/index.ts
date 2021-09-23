@@ -10,24 +10,31 @@ import chalk from 'chalk';
 import { listStages } from './commands/list-stages';
 import { runDev } from './commands/dev';
 import { runDeploy } from './commands/deploy';
+import path from 'path';
 
 export async function flight(args: Args) {
-  const config = await getMergedConfig(args);
+  const mergedConfig = await getMergedConfig(args);
+  //Normalise paths so they're not affected by projectpath
+  const configFilePath = args.config ? path.resolve(args.config) : args.config;
+  const config = merge<BaseConfigWithUser>(mergedConfig, {
+    outDir: path.resolve(mergedConfig.outDir),
+  });
+
   switch (args.command) {
     case 'dev': {
       if (checkDevStage(config)) {
-        await runDev(config, args.config);
+        await runDev(config, configFilePath);
       }
       break;
     }
     case 'deploy': {
       if (checkDeployStage(config)) {
-        runDeploy(config, args.config);
+        runDeploy(config, configFilePath);
       }
       break;
     }
     case 'list-stages': {
-      const stages = listStages(config.outDir, args.config);
+      const stages = listStages(config.projectDir, config.outDir, args.config);
       console.info(
         chalk.yellowBright(
           chalk.bgBlack(chalk.bold('Stages detected from cdk:'))
@@ -47,11 +54,12 @@ export async function flight(args: Args) {
  * @returns
  */
 async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
-  const c = await loadConfig(args.config);
+  const c = await loadConfig(args.projectDir, args.config);
   //The deep clean is important to make sure we dont overwrite values from the config with unset args
   const argsConfig = cleanDeep(
     {
       outDir: args.outDir,
+      projectDir: args.projectDir,
       dev: {
         stage: args.stage,
         synthArgs: args.synthArgs,
@@ -83,7 +91,7 @@ function verifyStage(
   config: BaseConfigWithUser,
   stage: string | undefined
 ): boolean {
-  const stages = listStages(config.outDir, config.user);
+  const stages = listStages(config.projectDir, config.outDir, config.user);
   let stageValid = true;
   if (!stage) {
     stageValid = false;

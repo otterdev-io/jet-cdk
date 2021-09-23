@@ -17,6 +17,7 @@ export async function processLambdas(
 ): Promise<NodeJS.Timeout[]> {
   if (doUpload) {
     runCdk('synth', {
+      cwd: config.projectDir,
       jetOutDir: config.outDir,
       context: { dev: 'true' },
       args: [
