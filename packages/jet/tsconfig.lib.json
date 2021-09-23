@@ -8,5 +8,5 @@
     "allowJs": true
   },
   "exclude": ["**/*.spec.ts"],
-  "include": ["**/*.ts", "src/jet.js"]
+  "include": ["**/*.ts", "jet.js"]
 }

@@ -3,7 +3,7 @@
   "projects": {
     "jet": {
       "root": "packages/jet",
-      "sourceRoot": "packages/jet/src",
+      "sourceRoot": "packages/jet",
       "projectType": "library",
       "targets": {
         "build": {
@@ -13,7 +13,7 @@
             "outputPath": "dist/packages/jet",
             "tsConfig": "packages/jet/tsconfig.lib.json",
             "packageJson": "packages/jet/package.json",
-            "main": "packages/jet/src/index.ts",
+            "main": "packages/jet/index.ts",
             "assets": ["packages/jet/*.md"]
           }
         },

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "title": "Jet deploy executor",
+  "description": "Runs jet deploy",
+  "type": "object",
+  "properties": {
+    "stage": {
+      "type": "string",
+      "description": "Stage to use for development",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "config": {
+      "type": "string",
+      "description": "Configuration file to read from",
+      "alias": "c"
+    },
+    "out-dir": {
+      "type": "string",
+      "description": "Output directory for jet data",
+      "alias": "o"
+    },
+    "deploy-args": {
+      "type": "string",
+      "description": "Extra arguments to cdk deploy"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

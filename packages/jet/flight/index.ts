@@ -11,7 +11,7 @@ import { listStages } from './commands/list-stages';
 import { runDev } from './commands/dev';
 import { runDeploy } from './commands/deploy';
 
-export async function main(args: Args) {
+export async function flight(args: Args) {
   const config = await getMergedConfig(args);
   switch (args.command) {
     case 'dev': {

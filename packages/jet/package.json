@@ -2,10 +2,14 @@
   "name": "@jet-cdk/jet",
   "version": "0.0.1",
   "bin": {
-    "jet": "./src/jet.js"
+    "jet": "./jet.js"
   },
   "peerDependencies": {
     "@aws-cdk/aws-lambda": "^1.123.0",
     "@aws-cdk/core": "^1.123.0"
+  },
+  "exports": {
+    "./flight": "./flight/index.js",
+    "./cdk": "./cdk/index.js"
   }
 }
