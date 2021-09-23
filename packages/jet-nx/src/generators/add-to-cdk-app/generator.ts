@@ -1,8 +1,11 @@
 import {
+  addDependenciesToPackageJson,
+  generateFiles,
   readProjectConfiguration,
   Tree,
   updateProjectConfiguration,
 } from '@nrwl/devkit';
+import path from 'path';
 import { DevExecutorSchema } from '../../executors/dev/schema';
 import { AddToCdkAppGeneratorSchema } from './schema';
 
@@ -27,6 +30,19 @@ function normalizeOptions(
   };
 }
 
+function addFiles(host: Tree, options: NormalizedSchema) {
+  const templateOptions = {
+    ...options,
+    template: '',
+  };
+  generateFiles(
+    host,
+    path.join(__dirname, 'files'),
+    options.projectRoot,
+    templateOptions
+  );
+}
+
 export default async function (
   tree: Tree,
   options: AddToCdkAppGeneratorSchema
@@ -36,7 +52,7 @@ export default async function (
     root: normalizedOptions.projectRoot,
     targets: {
       dev: {
-        executor: '@jet-cdk/nx-plugin:dev',
+        executor: '@jet-cdk/jet-nx:dev',
         options: {
           config: `${normalizedOptions.projectRoot}/jet.config.json5`,
           'out-dir': normalizedOptions.outDir,
@@ -44,4 +60,12 @@ export default async function (
       },
     },
   });
+  addDependenciesToPackageJson(
+    tree,
+    {
+      '@jet-cdk/jet': '^0.0.1',
+    },
+    {}
+  );
+  addFiles(tree, normalizedOptions);
 }

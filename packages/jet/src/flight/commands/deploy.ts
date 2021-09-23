@@ -1,6 +1,7 @@
+import cleanDeep from 'clean-deep';
 import { BaseConfigWithUserAndCommandStage } from '../../common/config';
 import { stackFilter } from '../core/config';
-import { outFilePath, runCdk } from '../core/run-cdk';
+import { runCdk } from '../core/run-cdk';
 
 export function runDeploy(
   config: BaseConfigWithUserAndCommandStage<'deploy'>,
@@ -8,7 +9,7 @@ export function runDeploy(
 ) {
   return runCdk('deploy', {
     jetOutDir: config.outDir,
-    context: { 'config-file': configFile },
+    context: cleanDeep({ 'config-file': configFile }),
     args: [
       ...config.deploy.deployArgs,
       stackFilter(config.deploy.stage, { user: config.user }),
