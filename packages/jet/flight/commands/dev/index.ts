@@ -20,6 +20,7 @@ export async function runDev(
   fsp.mkdir(config.outDir, { recursive: true });
   const lambdaWatcher = watch(config.dev.watcher.watch, {
     ignored: config.dev.watcher.ignore,
+    cwd: config.projectDir,
   });
   const lambdaMTime = await latestWatchedMtime(lambdaWatcher);
   const didDeploy = await deployIfNecessary(config, lambdaMTime, configFile);
@@ -55,7 +56,7 @@ export async function runDev(
     }
   });
   lambdaWatcher.on('change', uploadRefreshLambdas);
-  refreshLambdas(
+  await refreshLambdas(
     !didDeploy && (await lambdasNeedUploading(config.outDir, lambdaMTime))
   );
 }
