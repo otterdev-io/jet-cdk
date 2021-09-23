@@ -9,8 +9,9 @@ export class JetCoreStack extends Construct {
   ) {
     super(scope, id);
     //Add a context override just in case it is so desired
+    const projectDir = this.node.tryGetContext('jet:project-dir');
     const configFile = this.node.tryGetContext('jet:config-file');
-    loadConfig(configFile).then((config) => {
+    loadConfig(projectDir, configFile).then((config) => {
       Object.entries(stages).forEach(([id, stage]) =>
         stage(this, id.replace('{user}', config.user))
       );

@@ -5,6 +5,10 @@
   "description": "Runs jet list-stages",
   "type": "object",
   "properties": {
+    "project-dir": {
+      "type": "string",
+      "description": "Base directory of the jet project"
+    },
     "config": {
       "type": "string",
       "description": "Configuration file to read from",
@@ -17,5 +21,5 @@
     }
   },
   "additionalProperties": false,
-  "required": []
+  "required": ["project-dir"]
 }

@@ -5,6 +5,7 @@ export default async function runExecutor(options: DeployExecutorSchema) {
   try {
     await flight({
       command: 'dev',
+      projectDir: options['project-dir'],
       stage: options.stage,
       config: options.config,
       outDir: options['out-dir'],

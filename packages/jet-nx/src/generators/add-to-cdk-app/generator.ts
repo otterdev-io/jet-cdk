@@ -56,6 +56,7 @@ export default async function (
       dev: {
         executor: '@jet-cdk/jet-nx:dev',
         options: {
+          'project-dir': normalizedOptions.projectRoot,
           config: `${normalizedOptions.projectRoot}/jet.config.json5`,
           'out-dir': normalizedOptions.outDir,
         } as DevExecutorSchema,
@@ -63,6 +64,7 @@ export default async function (
       'list-stages': {
         executor: '@jet-cdk/jet-nx:list-stages',
         options: {
+          'project-dir': normalizedOptions.projectRoot,
           config: `${normalizedOptions.projectRoot}/jet.config.json5`,
           'out-dir': normalizedOptions.outDir,
         } as ListStagesExecutorSchema,
@@ -70,6 +72,7 @@ export default async function (
       deploy: {
         executor: '@jet-cdk/jet-nx:deploy',
         options: {
+          'project-dir': normalizedOptions.projectRoot,
           config: `${normalizedOptions.projectRoot}/jet.config.json5`,
           'out-dir': normalizedOptions.outDir,
         } as DeployExecutorSchema,

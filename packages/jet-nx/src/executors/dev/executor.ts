@@ -5,6 +5,7 @@ export default async function runExecutor(options: DevExecutorSchema) {
   try {
     await flight({
       command: 'dev',
+      projectDir: options['project-dir'],
       stage: options.stage,
       config: options.config,
       outDir: options['out-dir'],
@@ -15,6 +16,7 @@ export default async function runExecutor(options: DevExecutorSchema) {
       success: true,
     };
   } catch (e) {
+    console.error(e);
     return {
       success: false,
     };

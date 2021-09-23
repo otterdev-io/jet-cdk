@@ -56,7 +56,11 @@ export function doDeploy(
   return runCdk('deploy', {
     cwd: config.projectDir,
     jetOutDir: config.outDir,
-    context: cleanDeep({ dev: 'true', 'config-file': configFile }),
+    context: cleanDeep({
+      dev: 'true',
+      'project-dir': config.projectDir,
+      'config-file': configFile,
+    }),
     args: [
       '-O',
       outPath,
