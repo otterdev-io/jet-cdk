@@ -5,6 +5,7 @@ export default async function runExecutor(options: ListStagesExecutorSchema) {
   try {
     await flight({
       command: 'list-stages',
+      projectDir: options['project-dir'],
       config: options.config,
       outDir: options['out-dir'],
     });

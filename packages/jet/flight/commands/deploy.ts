@@ -10,7 +10,10 @@ export function runDeploy(
   return runCdk('deploy', {
     jetOutDir: config.outDir,
     cwd: config.projectDir,
-    context: cleanDeep({ 'config-file': configFile }),
+    context: cleanDeep({
+      'project-dir': config.projectDir,
+      'config-file': configFile,
+    }),
     args: [
       ...config.deploy.deployArgs,
       stackFilter(config.deploy.stage, { user: config.user }),

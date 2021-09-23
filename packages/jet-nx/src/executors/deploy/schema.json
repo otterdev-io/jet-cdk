@@ -5,6 +5,10 @@
   "description": "Runs jet deploy",
   "type": "object",
   "properties": {
+    "project-dir": {
+      "type": "string",
+      "description": "Base directory of the jet project"
+    },
     "stage": {
       "type": "string",
       "description": "Stage to use for development",
@@ -29,5 +33,5 @@
     }
   },
   "additionalProperties": false,
-  "required": []
+  "required": ["project-dir"]
 }

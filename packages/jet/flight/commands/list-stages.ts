@@ -8,7 +8,10 @@ export function listStages(
 ) {
   return runCdk('list', {
     jetOutDir: outDir,
-    context: cleanDeep({ 'config-file': configFile }),
+    context: cleanDeep({
+      'project-dir': projectDir,
+      'config-file': configFile,
+    }),
     stdio: 'pipe',
     cwd: projectDir,
   })
