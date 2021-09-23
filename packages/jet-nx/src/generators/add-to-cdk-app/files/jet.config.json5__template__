@@ -1,7 +1,11 @@
 {
 	dev: {
+		stage: 'default',
 		watcher: {
       watch: ['lib/**/*.ts', 'lib/**/*.js'],
     },
+	}
+	deploy: {
+		stage: 'default'
 	}
 }
