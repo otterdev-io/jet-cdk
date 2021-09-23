@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import child_process from 'child_process';
 import npmRunPath from 'npm-run-path';
+import path from 'path';
 
 export function runCdk(
   command: string,
@@ -43,5 +44,5 @@ export function runCdk(
 }
 
 export function outFilePath(outDir: string) {
-  return `${outDir}/cdk-outputs.json`;
+  return path.join(outDir, 'cdk-outputs.json');
 }

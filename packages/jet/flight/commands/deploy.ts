@@ -9,6 +9,7 @@ export function runDeploy(
 ) {
   return runCdk('deploy', {
     jetOutDir: config.outDir,
+    cwd: config.projectDir,
     context: cleanDeep({ 'config-file': configFile }),
     args: [
       ...config.deploy.deployArgs,
