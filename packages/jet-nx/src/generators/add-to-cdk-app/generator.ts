@@ -6,7 +6,9 @@ import {
   updateProjectConfiguration,
 } from '@nrwl/devkit';
 import path from 'path';
+import { DeployExecutorSchema } from '../../executors/deploy/schema';
 import { DevExecutorSchema } from '../../executors/dev/schema';
+import { ListStagesExecutorSchema } from '../../executors/list-stages/schema';
 import { AddToCdkAppGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends AddToCdkAppGeneratorSchema {
@@ -57,6 +59,20 @@ export default async function (
           config: `${normalizedOptions.projectRoot}/jet.config.json5`,
           'out-dir': normalizedOptions.outDir,
         } as DevExecutorSchema,
+      },
+      'list-stages': {
+        executor: '@jet-cdk/jet-nx:list-stages',
+        options: {
+          config: `${normalizedOptions.projectRoot}/jet.config.json5`,
+          'out-dir': normalizedOptions.outDir,
+        } as ListStagesExecutorSchema,
+      },
+      deploy: {
+        executor: '@jet-cdk/jet-nx:deploy',
+        options: {
+          config: `${normalizedOptions.projectRoot}/jet.config.json5`,
+          'out-dir': normalizedOptions.outDir,
+        } as DeployExecutorSchema,
       },
     },
   });
