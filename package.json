@@ -42,6 +42,7 @@
     "yargs": "^17.1.1"
   },
   "workspaces": [
-    "packages/*"
+    "packages/jet",
+    "packages/jet-nx"
   ]
 }

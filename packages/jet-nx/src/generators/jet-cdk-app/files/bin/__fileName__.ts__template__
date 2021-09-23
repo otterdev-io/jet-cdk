@@ -2,7 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { <%= className %>Stack } from '../lib/<%= fileName %>-stack';
-import { JetCoreStack, jetStage } from '@jet-cdk/jet';
+import { JetCoreStack, jetStage } from '@jet-cdk/jet/cdk';
 
 const app = new cdk.App();
 

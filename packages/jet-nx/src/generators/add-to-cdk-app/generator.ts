@@ -60,12 +60,12 @@ export default async function (
       },
     },
   });
-  addDependenciesToPackageJson(
+  addFiles(tree, normalizedOptions);
+  return addDependenciesToPackageJson(
     tree,
     {
       '@jet-cdk/jet': '^0.0.1',
     },
     {}
   );
-  addFiles(tree, normalizedOptions);
 }

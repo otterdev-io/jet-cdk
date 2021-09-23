@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "title": "Jet list stages executor",
+  "description": "Runs jet list-stages",
+  "type": "object",
+  "properties": {
+    "config": {
+      "type": "string",
+      "description": "Configuration file to read from",
+      "alias": "c"
+    },
+    "out-dir": {
+      "type": "string",
+      "description": "Output directory for jet data",
+      "alias": "o"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

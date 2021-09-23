@@ -5,6 +5,16 @@
       "implementation": "./src/executors/dev/executor",
       "schema": "./src/executors/dev/schema.json",
       "description": "dev executor"
+    },
+    "list-stages": {
+      "implementation": "./src/executors/list-stages/executor",
+      "schema": "./src/executors/list-stages/schema.json",
+      "description": "list-stages executor"
+    },
+    "deploy": {
+      "implementation": "./src/executors/deploy/executor",
+      "schema": "./src/executors/deploy/schema.json",
+      "description": "deploy executor"
     }
   }
 }

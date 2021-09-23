@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
 import { setupArgs } from './flight/core/args';
-import { main } from './flight';
+import { flight } from './flight';
 
-setupArgs().then(main);
+setupArgs().then(flight);
