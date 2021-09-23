@@ -49,7 +49,7 @@ export async function loadConfig(
   }).search();
   const mainExplorer = cosmiconfig('jet', {
     loaders,
-    searchPlaces: ['jetrc.json5', 'jetrc.json'],
+    searchPlaces: ['jet.config.json5', 'jet.config.json'],
   });
   const mainResult = await (path
     ? mainExplorer.load(path)

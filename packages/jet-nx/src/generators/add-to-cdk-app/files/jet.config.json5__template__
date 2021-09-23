@@ -1,0 +1,7 @@
+{
+	dev: {
+		watcher: {
+      watch: ['lib/**/*.ts', 'lib/**/*.js'],
+    },
+	}
+}

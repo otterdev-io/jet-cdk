@@ -7,9 +7,5 @@
   "peerDependencies": {
     "@aws-cdk/aws-lambda": "^1.123.0",
     "@aws-cdk/core": "^1.123.0"
-  },
-  "exports": {
-    "./fly": "./fly/index.js",
-    "./payload": "./payload/index.js"
   }
 }

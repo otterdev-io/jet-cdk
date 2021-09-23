@@ -61,6 +61,7 @@
             "outputPath": "dist/packages/jet-nx",
             "tsConfig": "packages/jet-nx/tsconfig.lib.json",
             "packageJson": "packages/jet-nx/package.json",
+            "updateBuildableProjectDepsInPackageJson": false,
             "main": "packages/jet-nx/src/index.ts",
             "assets": [
               "packages/jet-nx/*.md",

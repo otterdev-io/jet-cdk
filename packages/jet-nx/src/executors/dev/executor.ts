@@ -1,9 +1,9 @@
 import { DevExecutorSchema } from './schema';
-import { fly } from '@jet-cdk/jet';
+import { flight } from '@jet-cdk/jet';
 
 export default async function runExecutor(options: DevExecutorSchema) {
   console.log('Executor ran for Build', options);
-  fly.main({
+  flight.main({
     command: 'dev',
     stage: options.stage,
     config: options.config,

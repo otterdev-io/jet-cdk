@@ -6,6 +6,7 @@ import { outFilePath, runCdk } from '../../core/run-cdk';
 import { stackFilter } from '../../core/config';
 import { Stack } from './types';
 import chalk from 'chalk';
+import cleanDeep from 'clean-deep';
 
 export async function deployIfNecessary(
   config: BaseConfigWithUserAndCommandStage<'dev'>,
@@ -54,7 +55,7 @@ export function doDeploy(
   const outPath = outFilePath(config.outDir);
   return runCdk('deploy', {
     jetOutDir: config.outDir,
-    context: { dev: 'true', 'config-file': configFile },
+    context: cleanDeep({ dev: 'true', 'config-file': configFile }),
     args: [
       '-O',
       outPath,

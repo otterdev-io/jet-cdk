@@ -14,7 +14,6 @@
     "@nrwl/nx-plugin": "^12.9.0",
     "@nrwl/tao": "12.9.0",
     "@nrwl/workspace": "12.9.0",
-    "@otterdev/nx-cdk": "^0.0.11",
     "@types/jest": "26.0.24",
     "@types/node": "14.14.33",
     "@typescript-eslint/eslint-plugin": "~4.28.3",
@@ -32,6 +31,7 @@
     "@aws-sdk/client-lambda": "^3.33.0",
     "@aws-sdk/client-sts": "^3.33.0",
     "chalk": "^4.1.2",
+    "chokidar": "^3.5.2",
     "clean-deep": "^3.4.0",
     "cosmiconfig": "^7.0.1",
     "deepmerge": "^4.2.2",
@@ -42,7 +42,6 @@
     "yargs": "^17.1.1"
   },
   "workspaces": [
-    "packages/jet",
-    "packages/nx-plugin"
+    "packages/*"
   ]
 }
