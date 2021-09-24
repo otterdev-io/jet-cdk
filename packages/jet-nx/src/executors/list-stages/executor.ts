@@ -3,7 +3,7 @@ import { flight } from '@jet-cdk/jet/flight';
 
 export default async function runExecutor(options: ListStagesExecutorSchema) {
   try {
-    await flight({
+    await flight(false, {
       command: 'list-stages',
       projectDir: options['project-dir'],
       config: options.config,
