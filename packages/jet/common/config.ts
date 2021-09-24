@@ -1,11 +1,11 @@
 import { cosmiconfig } from 'cosmiconfig';
-import { LoadersSync } from 'cosmiconfig/dist/types';
+import { CosmiconfigResult, LoadersSync } from 'cosmiconfig/dist/types';
 import json5 from 'json5';
 import merge from 'deepmerge';
 import fs from 'fs/promises';
 import { STS } from '@aws-sdk/client-sts';
 import os from 'os';
-import path from 'path';
+import path, { dirname } from 'path';
 
 export const DefaultOutDir = '.jet';
 export const DefaultUserConfigPath = '.jetrc.json5';
@@ -59,15 +59,29 @@ export async function loadConfig(
     ? mainExplorer.load(configPath)
     : mainExplorer.search(projectDir));
   const result = merge.all<BaseConfig>([
-    DefaultConfig,
-    {
-      projectDir,
-      outDir: projectDir ? path.join(projectDir, DefaultOutDir) : DefaultOutDir,
-    },
-    mainResult?.config ?? {},
-    personalResult?.config ?? {},
+    normalizeOutDir(DefaultConfig, projectDir ?? '.'),
+    mainResult ? normalizeOutDir(mainResult.config, mainResult.filepath) : {},
+    personalResult
+      ? normalizeOutDir(personalResult.config, personalResult.filepath)
+      : {},
   ]);
   return checkUser(result, projectDir);
+}
+
+/**
+ * Take a config (loaded from a file) and make the contained outDir relative to the config
+ * @param result
+ * @returns
+ */
+function normalizeOutDir(config: BaseConfig, relativePath: string) {
+  return merge(
+    config,
+    config.outDir
+      ? {
+          outDir: path.resolve(dirname(relativePath), config.outDir),
+        }
+      : {}
+  );
 }
 
 export async function checkUser(

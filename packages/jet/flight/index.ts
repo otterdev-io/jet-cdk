@@ -12,17 +12,19 @@ import { runDev } from './commands/dev';
 import { runDeploy } from './commands/deploy';
 import path from 'path';
 
-export async function flight(args: Args) {
-  const mergedConfig = await getMergedConfig(args);
+/**
+ * Main entry point to jet run
+ * @param standalone Used as standalone cli, or as a library. Needed because I couldn't figure out clean exit
+ * @param args Options to run with
+ */
+export async function flight(standalone: boolean, args: Args) {
+  const config = await getMergedConfig(args);
   //Normalise paths so they're not affected by projectpath
   const configFilePath = args.config ? path.resolve(args.config) : args.config;
-  const config = merge<BaseConfigWithUser>(mergedConfig, {
-    outDir: path.resolve(mergedConfig.outDir),
-  });
   switch (args.command) {
     case 'dev': {
       if (checkDevStage(config, configFilePath)) {
-        await runDev(config, configFilePath);
+        await runDev(standalone, config, configFilePath);
       }
       break;
     }
@@ -61,7 +63,8 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
   //The deep clean is important to make sure we dont overwrite values from the config with unset args
   const argsConfig = cleanDeep(
     {
-      outDir: args.outDir,
+      //Resolve outdir to an absolute path if it exists, so it isnt affected by projectDir as cwd
+      outDir: args.outDir ? path.resolve(args.outDir) : undefined,
       projectDir: args.projectDir,
       dev: {
         stage: args.stage,
