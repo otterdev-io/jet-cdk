@@ -1,6 +1,6 @@
 {
   "name": "@jet-cdk/jet",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "bin": {
     "jet": "./jet.js"
   },
@@ -11,5 +11,12 @@
   "exports": {
     "./flight": "./flight/index.js",
     "./cdk": "./cdk/index.js"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otterdev-io/jet-cdk.git"
+  },
+  "homepage": "https://github.com/otterdev-io/jet-cdk/tree/main/packages/jet",
+  "description": "A lightweight toolkit for developing serverless apps with the AWS CDK",
+  "author": "Christopher Fraser"
 }

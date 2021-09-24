@@ -1,11 +1,18 @@
 {
   "name": "@jet-cdk/jet-nx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json",
   "dependencies": {
     "@otterdev/nx-cdk": "^0.0.12",
-    "@jet-cdk/jet": "^0.0.1"
-  }
+    "@jet-cdk/jet": "^0.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otterdev-io/jet-cdk.git"
+  },
+  "homepage": "https://github.com/otterdev-io/jet-cdk/tree/main/packages/jet-nx",
+  "description": "Nx plugin to support Jet, a lightweight toolkit for developing serverless apps with the AWS CDK.",
+  "author": "Christopher Fraser"
 }
