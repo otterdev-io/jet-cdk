@@ -43,6 +43,7 @@
   },
   "workspaces": [
     "packages/jet",
-    "packages/jet-nx"
+    "packages/jet-nx",
+    "packages/afterburner"
   ]
 }

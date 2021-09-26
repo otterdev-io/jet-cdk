@@ -1,6 +1,39 @@
 {
   "version": 2,
   "projects": {
+    "afterburner": {
+      "root": "packages/afterburner",
+      "sourceRoot": "packages/afterburner",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/packages/afterburner",
+            "tsConfig": "packages/afterburner/tsconfig.lib.json",
+            "packageJson": "packages/afterburner/package.json",
+            "main": "packages/afterburner/index.ts",
+            "assets": ["packages/afterburner/*.md"]
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["packages/afterburner/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/packages/afterburner"],
+          "options": {
+            "jestConfig": "packages/afterburner/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "jet": {
       "root": "packages/jet",
       "sourceRoot": "packages/jet",

@@ -40,6 +40,7 @@ export async function runDev(
       clearTailTimeouts();
       tailTimeouts = await processLambdas(doUpload, config);
     } catch (e) {
+      console.error(e);
       console.error(chalk.redBright(chalk.bgBlack('Error refreshing lambdas')));
     }
   };
