@@ -13,6 +13,9 @@
     }
   },
   "projects": {
+    "afterburner": {
+      "tags": []
+    },
     "jet": {
       "tags": []
     },

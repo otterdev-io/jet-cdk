@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@jet-cdk/afterburner": ["packages/afterburner/src/index.ts"],
       "@jet-cdk/jet": ["packages/jet/index.ts"],
       "@jet-cdk/jet-nx": ["packages/jet-nx/src/index.ts"]
     },
