@@ -1,2 +1,2 @@
-export { route } from './route';
-export { lambdaDataSource } from './datasource/lambda';
+export * from './route';
+export * from './datasource/lambda';

@@ -20,7 +20,7 @@ export const DefaultConfig = {
       watch: ['lib/**/*'],
       ignore: ['node_modules'],
     },
-    synthArgs: ['-q'],
+    synthArgs: [] as string[],
     deployArgs: [] as string[],
   },
   deploy: {
@@ -58,13 +58,18 @@ export async function loadConfig(
   const mainResult = await (configPath
     ? mainExplorer.load(configPath)
     : mainExplorer.search(projectDir));
-  const result = merge.all<BaseConfig>([
-    normalizeOutDir(DefaultConfig, projectDir ?? '.'),
-    mainResult ? normalizeOutDir(mainResult.config, mainResult.filepath) : {},
-    personalResult
-      ? normalizeOutDir(personalResult.config, personalResult.filepath)
-      : {},
-  ]);
+  const result = merge.all<BaseConfig>(
+    [
+      normalizeOutDir(DefaultConfig, projectDir ?? '.'),
+      mainResult ? normalizeOutDir(mainResult.config, mainResult.filepath) : {},
+      personalResult
+        ? normalizeOutDir(personalResult.config, personalResult.filepath)
+        : {},
+    ],
+    {
+      arrayMerge: (target, source) => source,
+    }
+  );
   return checkUser(result, projectDir);
 }
 

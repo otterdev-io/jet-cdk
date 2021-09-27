@@ -10,18 +10,19 @@ import cleanDeep from 'clean-deep';
 
 export async function deployIfNecessary(
   config: BaseConfigWithUserAndCommandStage<'dev'>,
-  lambaMTime: number,
+  lambdaMTime: number,
   configFile: string | undefined
 ): Promise<boolean> {
   let deploy = false;
   const outPath = outFilePath(config.outDir);
   try {
+    console.log(fs.existsSync(outPath));
     if (!fs.existsSync(outPath)) {
       console.info('No deployment outputs file exists');
       deploy = true;
     } else {
       const outStat = await fsp.stat(outPath);
-      if (outStat.mtimeMs < lambaMTime) {
+      if (outStat.mtimeMs < lambdaMTime) {
         console.info('Source file has changed since last deploy');
         deploy = true;
       }
@@ -34,7 +35,7 @@ export async function deployIfNecessary(
     }
   } catch (e) {
     console.error(`Error statting ${outFilePath}, giving up`);
-    exit(0);
+    return false;
   }
   if (deploy) {
     doDeploy(config, configFile);

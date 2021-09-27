@@ -1,6 +1,10 @@
-import { LambdaDataSource, DataSourceOptions } from '@aws-cdk/aws-appsync';
-import { FunctionBuilder } from '../../fn/types';
-import { DataSourceBuilder } from '../types';
+import {
+  LambdaDataSource,
+  DataSourceOptions,
+  GraphqlApi,
+} from '@aws-cdk/aws-appsync';
+import { IFunction } from '@aws-cdk/aws-lambda';
+import { Builder } from '../../common/lib';
 
 /**
  * Create a builder for a lambda datasource
@@ -9,9 +13,9 @@ import { DataSourceBuilder } from '../types';
  * @returns A LambdaDataSource builder
  */
 export function lambdaDataSource(
-  functionBuilder: FunctionBuilder,
+  functionBuilder: Builder<IFunction>,
   options?: DataSourceOptions
-): DataSourceBuilder<LambdaDataSource> {
+): Builder<LambdaDataSource, GraphqlApi> {
   return (api, id) =>
     api.addLambdaDataSource(id, functionBuilder(api.stack, id), options);
 }
