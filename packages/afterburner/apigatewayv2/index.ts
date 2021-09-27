@@ -1,2 +1,3 @@
-export { route } from './route';
-export { lambdaProxy } from './integrations/lambdaProxy';
+export * from './route';
+export * from './integrations/lambdaProxy';
+export * from './authorizers/lib';

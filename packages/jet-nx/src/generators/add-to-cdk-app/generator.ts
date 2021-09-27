@@ -85,7 +85,7 @@ export default async function (
   return addDependenciesToPackageJson(
     tree,
     {
-      '@jet-cdk/jet': '^0.0.1',
+      '@jet-cdk/jet': '^0.0.3',
     },
     {}
   );
