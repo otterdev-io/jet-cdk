@@ -1,7 +1,6 @@
 import { BaseConfigWithUserAndCommandStage } from '../../../common/config';
 import fsp from 'fs/promises';
 import fs from 'fs';
-import { exit } from 'process';
 import { outFilePath, runCdk } from '../../core/run-cdk';
 import { stackFilter } from '../../core/config';
 import { Stack } from './types';
@@ -16,7 +15,6 @@ export async function deployIfNecessary(
   let deploy = false;
   const outPath = outFilePath(config.outDir);
   try {
-    console.log(fs.existsSync(outPath));
     if (!fs.existsSync(outPath)) {
       console.info('No deployment outputs file exists');
       deploy = true;

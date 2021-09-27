@@ -17,15 +17,6 @@ Soar through the Clouds with Jet. Jet CDK is a lightweight toolkit for developin
 ```sh
 npm install @jet-cdk/jet
 ```
-## Bootstrap
-- Ensure your app is using new-style synthesis. In cdk.json
-```json
-"context": {
-    "@aws-cdk/core:newStyleStackSynthesis": true
-  }
-```
-- Ensure your AWS profile is [bootstrapped](https://docs.aws.amazon.com/cdk/latest/guide/bootstrapping.html).
-
 ## Setup
 In your cdk app main file, add a `JetCoreStack`, and configure it with the stages you want to deploy. If a stage has `{user}` in the name, the token will be replaced with the user's name from their configuration, which is initially pulled from IAM, or their os username.
 
@@ -134,5 +125,8 @@ The `stage` settings once defined allow you to provide default stages for the `d
 
 # Gitignore
 Don't forget to add `.jetrc.json5` and `.jet` to your gitignore.
+
+# Node development
+If you are using Node functions, you may want to install `esbuild` in your repo, otherwise cdk will set up a docker environment to build your functions, which can take some time.
 
 # More documentation to come!

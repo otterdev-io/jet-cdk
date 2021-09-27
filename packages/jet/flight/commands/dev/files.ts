@@ -7,7 +7,6 @@ export async function latestWatchedMtime(watcher: FSWatcher) {
     console.info('Waiting for file watcher to ready up...');
     watcher.on('ready', async () => {
       const watched = watcher.getWatched();
-      console.log(watched);
       const mtimes = await Promise.all(
         Object.entries(watched).map(
           async ([dir, files]) =>
