@@ -1,13 +1,17 @@
 {
   "name": "@jet-cdk/afterburner",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "peerDependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.124.0",
     "@aws-cdk/aws-apigatewayv2-authorizers": "^1.124.0",
     "@aws-cdk/aws-apigatewayv2-integrations": "^1.124.0",
     "@aws-cdk/aws-appsync": "^1.124.0",
+    "@aws-cdk/aws-dynamodb": "^1.124.0",
+    "@aws-cdk/aws-elasticsearch": "^1.124.0",
+    "@aws-cdk/aws-lambda-go": "^1.124.0",
     "@aws-cdk/aws-lambda-nodejs": "^1.124.0",
     "@aws-cdk/aws-lambda-python": "^1.124.0",
-    "@aws-cdk/aws-lambda-go": "^1.124.0"
+    "@aws-cdk/aws-rds": "^1.124.0",
+    "@aws-cdk/aws-secretsmanager": "^1.124.0"
   }
 }

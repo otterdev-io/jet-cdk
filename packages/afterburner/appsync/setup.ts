@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BaseDataSource, GraphqlApi } from '@aws-cdk/aws-appsync';
-import { Builder } from '../common/lib';
 import {
   DataSourceFields,
+  ResolverBuilder,
   DataSourceMap,
-  GraphqlType,
-  ResolverConfig,
-  ResolverSpec,
+  ResolverMap,
 } from './types';
 
 /**
@@ -15,42 +14,43 @@ import {
  * @returns An object mapping from type to field to handler
  */
 export function setupResolvers<
-  T extends DataSourceMap,
+  T extends { Query?: ResolverMap; Mutation?: ResolverMap },
   D extends BaseDataSource
 >(
   api: GraphqlApi,
   props: {
-    resolvers: ResolverSpec<T>;
-    defaultResolver?: (s: string) => Builder<D, GraphqlApi>;
+    resolvers: T;
+    defaultOptions?: (s: string) => ResolverBuilder<D>;
   }
-): ResolverConfig<T, D> {
-  const output: ResolverConfig<T, D> = {};
+): DataSourceMap<T, D> {
+  const output = {} as DataSourceMap<T, D>;
   Object.entries(props.resolvers).forEach(([type, typeHandler]) => {
     if (typeHandler) {
       Object.entries(typeHandler).forEach(([field, fieldHandler]) => {
         if (fieldHandler) {
           const id = `${type}${field}`;
-          let dataSource: BaseDataSource;
+          //Type of datasource varies by entry
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let dataSource: any;
           if (typeof fieldHandler === 'string') {
-            if (!props.defaultResolver) {
+            if (!props.defaultOptions) {
               throw new Error(
                 'Need to specify default resolver to use a string spec'
               );
             }
-            dataSource = props.defaultResolver(fieldHandler)(api, id);
+            dataSource = props.defaultOptions(fieldHandler)(type, field)(
+              api,
+              id
+            );
           } else {
-            dataSource = fieldHandler(api, id);
+            dataSource = fieldHandler(type, field)(api, id);
           }
-          dataSource.createResolver({
-            typeName: type,
-            fieldName: field,
-          });
-          const gqlType = type as GraphqlType;
-          if (!output[gqlType]) {
-            output[gqlType] = {} as DataSourceFields<T, D>;
+          if (!output[type as keyof DataSourceMap<T, D>]) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            output[type as keyof DataSourceMap<T, D>] = {} as any;
           }
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          output[gqlType]![field as keyof T] = dataSource as any;
+          // @ts-ignore
+          output[type as keyof DataSourceMap<T, D>][field] = dataSource;
         }
       });
     }

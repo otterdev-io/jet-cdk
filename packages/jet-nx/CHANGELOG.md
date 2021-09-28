@@ -1,3 +1,6 @@
+
+# 0.0.5 - September 28 2021
+Add afterburner to generated apps
 # 0.0.4 - September 27 2021
 Tweak version dependencies
 # 0.0.2 - September 24 2021

@@ -1,40 +1,46 @@
 import { BaseDataSource, GraphqlApi } from '@aws-cdk/aws-appsync';
 import { Builder } from '../common/lib';
 
-export type DataSourceMap = Record<string, string | Builder<any, GraphqlApi>>;
 /**
- * Top level GraphQL types
+ * A function that will build a resolver, and return our dataSource D
  */
-export type GraphqlType = 'Query' | 'Mutation';
+export type ResolverBuilder<D> = (
+  typeName: string,
+  fieldName: string
+) => Builder<D, GraphqlApi>;
 
-/**
- * Routing specification for an appsync API. A mapping from GraphqlType to
- * a record of fields mapping to data source builders
- */
-export type ResolverSpec<T extends DataSourceMap> = Partial<
-  Record<GraphqlType, T>
->;
+export type ResolverMap = Record<string, string | ResolverBuilder<any>>;
 
 /**
  * Map out fields to their builder return type, or the default type if its a string
  */
 export type DataSourceFields<
-  T extends DataSourceMap,
+  R extends ResolverMap,
   D extends BaseDataSource
 > = {
-  [K in keyof T]: T[K] extends string
+  [K in keyof R]: R[K] extends string
     ? D
-    : T[K] extends Builder<infer H, GraphqlApi>
-    ? H
+    : R[K] extends ResolverBuilder<infer DS>
+    ? DS
     : never;
 };
 
 /**
  * Mapping from graphql type to a record of fields mapping to data sources
- * @type T the input map
+ * @type T types mapped, from 'Query' and 'Mutation'
+ * @type R mapping of
  * @type D the default builder type
  */
-export type ResolverConfig<
-  T extends DataSourceMap,
+export type DataSourceMap<
+  T extends { Query?: ResolverMap; Mutation?: ResolverMap },
   D extends BaseDataSource
-> = Partial<Record<GraphqlType, DataSourceFields<T, D>>>;
+> = (T extends { Query?: infer Q }
+  ? Q extends ResolverMap
+    ? { Query: DataSourceFields<Q, D> }
+    : Record<string, never>
+  : Record<string, never>) &
+  (T extends { Mutation?: infer M }
+    ? M extends ResolverMap
+      ? { Mutation: DataSourceFields<M, D> }
+      : Record<string, never>
+    : Record<string, never>);

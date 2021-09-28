@@ -1,9 +1,9 @@
 import {
-  LambdaDataSource,
   DataSourceOptions,
+  DynamoDbDataSource,
   GraphqlApi,
 } from '@aws-cdk/aws-appsync';
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { ITable } from '@aws-cdk/aws-dynamodb';
 import { Builder } from '../../common/lib';
 
 /**
@@ -12,10 +12,9 @@ import { Builder } from '../../common/lib';
  * @param options DataSource options
  * @returns A LambdaDataSource builder
  */
-export function lambdaDataSource(
-  functionBuilder: Builder<IFunction>,
+export default function dynamoDataSource(
+  table: ITable,
   options?: DataSourceOptions
-): Builder<LambdaDataSource, GraphqlApi> {
-  return (api, id) =>
-    api.addLambdaDataSource(id, functionBuilder(api.stack, id), options);
+): Builder<DynamoDbDataSource, GraphqlApi> {
+  return (api, id) => api.addDynamoDbDataSource(`ds${id}`, table, options);
 }

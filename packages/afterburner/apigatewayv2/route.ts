@@ -6,7 +6,7 @@ import {
 } from '@aws-cdk/aws-apigatewayv2';
 import { Construct } from '@aws-cdk/core';
 import { Builder } from '../common/lib';
-import { toId } from '../fn/lib';
+import { toId } from '../functions/lib';
 import { Method, RouteHandler, RouteOptions, Routing } from './types';
 
 /**

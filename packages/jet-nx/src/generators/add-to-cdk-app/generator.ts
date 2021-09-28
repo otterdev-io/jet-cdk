@@ -10,6 +10,7 @@ import { DeployExecutorSchema } from '../../executors/deploy/schema';
 import { DevExecutorSchema } from '../../executors/dev/schema';
 import { ListStagesExecutorSchema } from '../../executors/list-stages/schema';
 import { AddToCdkAppGeneratorSchema } from './schema';
+import * as versions from '../versions';
 
 interface NormalizedSchema extends AddToCdkAppGeneratorSchema {
   project: string;
@@ -85,7 +86,8 @@ export default async function (
   return addDependenciesToPackageJson(
     tree,
     {
-      '@jet-cdk/jet': '^0.0.3',
+      '@jet-cdk/jet': versions.jet,
+      '@jet-cdk/afterburner': versions.afterburner,
     },
     {}
   );

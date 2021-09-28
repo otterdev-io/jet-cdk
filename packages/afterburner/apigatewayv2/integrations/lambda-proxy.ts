@@ -7,10 +7,12 @@ import { RouteOptions } from '../types';
  * @param integration A FunctionBuilder that will create the lambda to integrate
  * @returns A LambdaProxyIntegration Builder
  */
-export function lambdaProxy(fn: Builder<IFunction>): Builder<RouteOptions> {
+export default function lambdaProxy(
+  fn: Builder<IFunction>
+): Builder<RouteOptions> {
   return (stack, id) => ({
     integration: new LambdaProxyIntegration({
-      handler: fn(stack, `lambda-${id}`),
+      handler: fn(stack, `fn${id}`),
     }),
   });
 }
