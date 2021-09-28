@@ -29,7 +29,7 @@ export function setupResolvers<
     if (typeHandler) {
       Object.entries(typeHandler).forEach(([field, fieldHandler]) => {
         if (fieldHandler) {
-          const id = `${type}-${field}`;
+          const id = `${type}${field}`;
           let dataSource: BaseDataSource;
           if (typeof fieldHandler === 'string') {
             if (!props.defaultResolver) {
