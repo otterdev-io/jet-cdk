@@ -1,4 +1,7 @@
-
+# 0.0.7 - September 29 2021
+- Add function to get stage from stacks
+# 0.0.6 - September 29 2021
+- Add stage informational output
 # 0.0.5 - September 29 2021
 - Substitute {user} into stage setting
 # 0.0.4 - September 29 2021

@@ -107,6 +107,13 @@ function checkDeployStage(
   return verifyStage(config, config.deploy.stage, configFilePath);
 }
 
+/**
+ * Ensure that the stage that has been configured is actually available
+ * @param config loaded and merged configuration
+ * @param stage the specified stage
+ * @param configFilePath The path to the config file
+ * @returns
+ */
 function verifyStage(
   config: BaseConfigWithUser,
   stage: string | undefined,
@@ -138,6 +145,14 @@ function verifyStage(
     stages.forEach((s) => {
       console.info(s);
     });
+  } else {
+    console.info(
+      chalk.whiteBright(
+        chalk.bgBlack(
+          chalk.bold(`Jet taking off on stage: ${chalk.blueBright(stage)}`)
+        )
+      )
+    );
   }
   return stageValid;
 }

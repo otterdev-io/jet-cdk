@@ -20,3 +20,7 @@ export class JetCoreStack extends Construct {
 }
 
 export type StageBuilder = (scope: Construct, id: string) => Stage;
+
+export function getJetStage(scope: Construct) {
+  return scope.node.tryGetContext('jet:stage');
+}
