@@ -1,4 +1,7 @@
-
+# 0.0.10 - September 29 2021
+Fix statusCode in app template
+# 0.0.9 - September 29 2021
+Bump @otterdev/nx-cdk version
 # 0.0.8 - September 29 2021
 Bump afterburner version
 # 0.0.7 - September 29 2021
