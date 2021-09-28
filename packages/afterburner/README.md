@@ -1,6 +1,6 @@
 # afterburner
 
-Afterburner is a set of functions that provide elegant, yet powerful apis for building a serverless app, with a focus on streamlining lambda function integration. The apis are based around function composition, allowing for declarative routing with full power.
+Afterburner is a set of functions that provide elegant, yet powerful apis for building a serverless app with the AWS CDK, with a focus on streamlining lambda function integration. The apis are based around function composition, allowing for declarative routing with full power.
 
 It is part of Jet-CDK, a toolkit to simplify serverless app development.
 Despite this, although it pairs well with the Jet environment, with its live lambda reloading, Afterburner can be used standalone.

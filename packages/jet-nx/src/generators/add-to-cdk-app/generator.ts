@@ -89,6 +89,8 @@ export default async function (
       '@jet-cdk/jet': versions.jet,
       '@jet-cdk/afterburner': versions.afterburner,
     },
-    {}
+    {
+      '@types/aws-lambda': versions.typesAwsLambda,
+    }
   );
 }

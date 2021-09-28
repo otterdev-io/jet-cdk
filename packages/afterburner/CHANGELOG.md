@@ -1,3 +1,6 @@
+0.1.1 - September 29 2021
+- Fix publish of wrong folder
+
 0.1.0 - September 29 2021
 - Add all missing appsync datasources, integrations, and authorizers
 - Rename imports to stick to aws naming convention 

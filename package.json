@@ -45,5 +45,9 @@
     "packages/jet",
     "packages/jet-nx",
     "packages/afterburner"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otterdev-io/jet-cdk.git"
+  }
 }

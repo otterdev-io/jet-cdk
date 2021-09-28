@@ -6,7 +6,7 @@ import { route } from '@jet-cdk/afterburner/apigatewayv2';
 import nodejs from '@jet-cdk/afterburner/functions/nodejs';
 import lambda from '@jet-cdk/afterburner/apigatewayv2/integrations/lambda-proxy';
 
-export class TestAppStack extends cdk.Stack {
+export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
