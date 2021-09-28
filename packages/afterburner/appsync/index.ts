@@ -1,2 +1,1 @@
-export * from './route';
-export * from './datasource/lambda';
+export * from './setup';
