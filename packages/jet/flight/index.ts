@@ -78,7 +78,19 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
     },
     { undefinedValues: true }
   );
-  return merge<BaseConfigWithUser, typeof argsConfig>(c, argsConfig);
+  const mergedConfig = merge<BaseConfigWithUser, typeof argsConfig>(
+    c,
+    argsConfig
+  );
+  //Substitute user back into our stages
+  return merge(mergedConfig, {
+    dev: {
+      stage: mergedConfig.dev.stage?.replace('{user}', mergedConfig.user),
+    },
+    deploy: {
+      stage: mergedConfig.deploy.stage?.replace('{user}', mergedConfig.user),
+    },
+  });
 }
 
 function checkDevStage(
