@@ -17,7 +17,7 @@ export type PythonFunctionConstructor = string | PythonFunctionProps;
  * string - sets just the 'entry' file. Uses the CDK behaviour of assuming the handler function is exported as 'handler'
  * PythonFunctionProps - Full constructor options for PythonFunction
  */
-export function python(
+export default function python(
   constructor: PythonFunctionConstructor
 ): Builder<PythonFunction> {
   return (scope, id) => {

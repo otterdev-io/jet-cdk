@@ -17,7 +17,7 @@ export type NodeFunctionConstructor = string | NodejsFunctionProps;
  * string - sets just the 'entry' file. Uses the CDK behaviour of assuming the handler function is exported as 'handler'
  * NodeJSFunctionProps - Full constructor options for NodejsFunction
  */
-export function nodejs(
+export default function nodejs(
   constructor: NodeFunctionConstructor
 ): Builder<NodejsFunction> {
   return (scope, id) => {

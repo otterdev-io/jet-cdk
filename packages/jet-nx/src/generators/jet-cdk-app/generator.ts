@@ -1,4 +1,5 @@
 import { generateFiles, names, offsetFromRoot, Tree } from '@nrwl/devkit';
+import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 import { CdkAppWithJetGeneratorSchema } from './schema';
 import {
   cdkAppGenerator,
@@ -26,7 +27,8 @@ export default async function (
   tree: Tree,
   options: CdkAppWithJetGeneratorSchema
 ) {
-  await cdkAppGenerator(tree, options);
-  await addToCdkAppGenerator(tree, { project: options.name });
+  const cdk = await cdkAppGenerator(tree, options);
+  const addToApp = await addToCdkAppGenerator(tree, { project: options.name });
   addFiles(tree, cdkAppNormalizeOptions(tree, options));
+  return runTasksInSerial(cdk, addToApp);
 }
