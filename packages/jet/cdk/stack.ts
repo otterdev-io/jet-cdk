@@ -15,7 +15,6 @@ export function jetOutput(scope: Stack) {
     }));
     const synthFunctions = functions.map((f) => ({
       id: f.node.id,
-      name: f.functionName,
       path: (f.node.defaultChild as CfnResource).getMetadata('aws:asset:path'),
     }));
 

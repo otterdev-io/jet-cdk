@@ -129,7 +129,6 @@ async function makeZip(
     return null;
   }
   const assetPath = `${assemblyOutDir}/${synthFn.path}`;
-  console.log(assetPath);
   const assetZip = new zip();
   const assetFilePaths = await fsp.readdir(assetPath);
   const assetFiles = await Promise.all(
