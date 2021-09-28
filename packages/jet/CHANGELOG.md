@@ -1,3 +1,6 @@
+
+# 0.0.5 - September 29 2021
+- Substitute {user} into stage setting
 # 0.0.4 - September 29 2021
 - Update readme
 # 0.0.3 - September 27 2021
