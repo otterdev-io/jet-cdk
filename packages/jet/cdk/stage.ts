@@ -19,6 +19,7 @@ export class JetStage extends Stage {
   ) {
     super(scope, id, props);
     this.node.setContext('jet:assembly-out-dir', this._assemblyBuilder.outdir);
+    this.node.setContext('jet:stage', id);
     stacks(this);
     Aspects.of(this).add(new StackJetter());
   }

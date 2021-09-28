@@ -1,3 +1,5 @@
+# 0.0.11 - September 29 2021
+Bump jet version
 # 0.0.10 - September 29 2021
 Fix statusCode in app template
 # 0.0.9 - September 29 2021
