@@ -1,6 +1,6 @@
 {
   "name": "@jet-cdk/afterburner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "peerDependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.124.0",
     "@aws-cdk/aws-apigatewayv2-authorizers": "^1.124.0",
@@ -13,5 +13,12 @@
     "@aws-cdk/aws-lambda-python": "^1.124.0",
     "@aws-cdk/aws-rds": "^1.124.0",
     "@aws-cdk/aws-secretsmanager": "^1.124.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otterdev-io/jet-cdk.git"
+  },
+  "homepage": "https://github.com/otterdev-io/jet-cdk/tree/main/packages/afterburner",
+  "description": "A set of functions that provide elegant, yet powerful apis for building a serverless app with AWS CDK, with a focus on streamlining lambda function integration.",
+  "author": "Christopher Fraser"
 }

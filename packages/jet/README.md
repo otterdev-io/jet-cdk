@@ -110,7 +110,7 @@ The default configuration is:
       watch: ['lib/**/*'],
       ignore: ['node_modules'],
     },
-    synthArgs: ['-q'],
+    synthArgs: [],
     deployArgs: [],
   },
   deploy: {
