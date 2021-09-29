@@ -1,4 +1,5 @@
-
+# 0.0.9 - September 29 2021
+- Format generated json
 # 0.0.8 - September 29 2021
 - Add values writing
 # 0.0.7 - September 29 2021
