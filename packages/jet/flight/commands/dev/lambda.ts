@@ -3,12 +3,18 @@ import { outFilePath, runCdk } from '../../core/run-cdk';
 import { Lambda } from '@aws-sdk/client-lambda';
 import zip from 'jszip';
 import fsp from 'fs/promises';
-import { DeployedFunction, JetOutput, Stack, SynthedFunction } from './types';
+import {
+  DeployedFunction,
+  JetOutput,
+  Stack,
+  SynthedFunction,
+} from '../common/types';
 import { tailLogs } from './logs';
 import { stackFilter } from '../../core/config';
 import chalk from 'chalk';
 import { usagePrompt } from './prompt';
 import json5 from 'json5';
+import { getStacks } from '../common/outFile';
 
 const lambda = new Lambda({});
 export async function processLambdas(
@@ -151,16 +157,6 @@ async function updateLambda(zip: Uint8Array, fn: DeployedFunction) {
     ZipFile: zip,
   });
   console.info(response.LastUpdateStatus);
-}
-
-async function getStacks(outDir: string): Promise<Record<string, Stack>> {
-  try {
-    const outputsFile = await fsp.readFile(outFilePath(outDir), 'utf-8');
-    return JSON.parse(outputsFile);
-  } catch (e) {
-    console.error(chalk.bgBlack(chalk.red(e)));
-    return {};
-  }
 }
 
 export async function lambdasNeedUploading(

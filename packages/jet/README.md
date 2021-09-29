@@ -123,6 +123,23 @@ The default configuration is:
 
 The `stage` settings once defined allow you to provide default stages for the `dev` and deploy commands, so that you can just run `jet dev` / `jet deploy` to use the defaults.
 
+# Exporting values to a file
+A function `writeValues` is provided in `@jet-cdk/jet/cdk` which allows you export a file containing the provided values, in json, json5, or env format. This is useful when locally running applications, eg a frontend, depend on values from your deployed backend. The file is generated after each deployment, so if you just added it, and your jet is running, press d to deploy again.
+
+```ts
+writeValues(this, {
+  path: path.join(__dirname, "../../frontend/.env.backend.local"),
+  values: {
+    NEXT_PUBLIC_REGION: this.region,
+    NEXT_PUBLIC_USER_POOL_WEB_CLIENT_ID: clientId,
+    NEXT_PUBLIC_USER_POOL_ID: userPool.userPoolId,
+    NEXT_PUBLIC_GRAPHQL_AUTHENTICATION_TYPE: appsync.AuthorizationType.USER_POOL,
+    NEXT_PUBLIC_GRAPHQL_ENDPOINT: api.graphqlUrl,
+  },
+  format: "env",
+});
+```
+
 # Gitignore
 Don't forget to add `.jetrc.json5` and `.jet` to your gitignore.
 

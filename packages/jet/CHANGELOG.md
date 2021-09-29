@@ -1,3 +1,6 @@
+
+# 0.0.8 - September 29 2021
+- Add values writing
 # 0.0.7 - September 29 2021
 - Add function to get stage from stacks
 # 0.0.6 - September 29 2021

@@ -3,9 +3,10 @@ import fsp from 'fs/promises';
 import fs from 'fs';
 import { outFilePath, runCdk } from '../../core/run-cdk';
 import { stackFilter } from '../../core/config';
-import { Stack } from './types';
+import { Stack } from '../common/types';
 import chalk from 'chalk';
 import cleanDeep from 'clean-deep';
+import { writeValues } from '../common/writeValues';
 
 export async function deployIfNecessary(
   config: BaseConfigWithUserAndCommandStage<'dev'>,
@@ -52,8 +53,7 @@ export function doDeploy(
   configFile: string | undefined
 ) {
   const outPath = outFilePath(config.outDir);
-  console.log(outPath);
-  return runCdk('deploy', {
+  runCdk('deploy', {
     cwd: config.projectDir,
     jetOutDir: config.outDir,
     context: cleanDeep({
@@ -68,4 +68,5 @@ export function doDeploy(
       stackFilter(config.dev.stage, { user: config.user }),
     ],
   });
+  writeValues(config.outDir, config.projectDir);
 }

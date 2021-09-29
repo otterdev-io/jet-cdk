@@ -1,7 +1,16 @@
-import { CfnOutput, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
+import {
+  CfnOutput,
+  CfnResource,
+  Construct,
+  IConstruct,
+  Stack,
+} from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import json5 from 'json5';
 import fsp from 'fs/promises';
+import { WriteValues } from '../flight/commands/common/types';
+
+const keyWriteValues = 'jet:writeValues';
 
 export function jetOutput(scope: Stack) {
   const assemblyOutDir = scope.node.tryGetContext('jet:assembly-out-dir');
@@ -22,10 +31,12 @@ export function jetOutput(scope: Stack) {
       `${assemblyOutDir}/${scope.stackName}.functions.json5`,
       json5.stringify(synthFunctions, undefined, 2)
     );
+
     new CfnOutput(scope, 'jet', {
       value: JSON.stringify({
         functions: outputFunctions,
         assemblyOutDir,
+        writeValues: (scope as any)[keyWriteValues],
       }),
     });
   }
@@ -33,4 +44,9 @@ export function jetOutput(scope: Stack) {
 
 function isIFunction(c: IConstruct): c is lambda.IFunction {
   return 'functionArn' in c;
+}
+
+export async function writeValues(scope: Construct, props: WriteValues) {
+  const writeValues: WriteValues[] = (scope as any)[keyWriteValues] ?? [];
+  (scope as any)[keyWriteValues] = [...writeValues, props];
 }
