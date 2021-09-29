@@ -25,9 +25,9 @@ export async function writeValues(outDir: string, projectDir: string) {
         jetOutput.writeValues.map((wv) => {
           const output =
             wv.format === 'json' || wv.format == null
-              ? JSON.stringify(wv.values)
+              ? JSON.stringify(wv.values, undefined, 2)
               : wv.format === 'json5'
-              ? json5.stringify(wv.values)
+              ? json5.stringify(wv.values, undefined, 2)
               : envFile.stringify(wv.values);
           return fsp.writeFile(path.resolve(projectDir, wv.path), output);
         })
