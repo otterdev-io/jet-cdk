@@ -11,6 +11,7 @@ import { listStages } from './commands/list-stages';
 import { runDev } from './commands/dev';
 import { runDeploy } from './commands/deploy';
 import path from 'path';
+import { writeValues } from './commands/common/writeValues';
 
 /**
  * Main entry point to jet run
@@ -30,7 +31,7 @@ export async function flight(standalone: boolean, args: Args) {
     }
     case 'deploy': {
       if (checkDeployStage(config, configFilePath)) {
-        runDeploy(config, configFilePath);
+        await runDeploy(config, configFilePath);
       }
       break;
     }

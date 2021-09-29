@@ -2,12 +2,13 @@ import cleanDeep from 'clean-deep';
 import { BaseConfigWithUserAndCommandStage } from '../../common/config';
 import { stackFilter } from '../core/config';
 import { runCdk } from '../core/run-cdk';
+import { writeValues } from './common/writeValues';
 
 export function runDeploy(
   config: BaseConfigWithUserAndCommandStage<'deploy'>,
   configFile: string | undefined
 ) {
-  return runCdk('deploy', {
+  runCdk('deploy', {
     jetOutDir: config.outDir,
     cwd: config.projectDir,
     context: cleanDeep({
@@ -19,4 +20,5 @@ export function runDeploy(
       stackFilter(config.deploy.stage, { user: config.user }),
     ],
   });
+  writeValues(config.outDir, config.projectDir);
 }

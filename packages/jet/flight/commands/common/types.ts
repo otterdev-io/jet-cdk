@@ -5,6 +5,7 @@ export interface Stack {
 export interface JetOutput {
   functions: DeployedFunction[];
   assemblyOutDir: string;
+  writeValues: WriteValues[];
 }
 
 export interface SynthedFunction {
@@ -14,4 +15,10 @@ export interface SynthedFunction {
 export interface DeployedFunction {
   id: string;
   name: string;
+}
+
+export interface WriteValues {
+  path: string;
+  values: Record<string, string>;
+  format?: 'json' | 'json5' | 'env';
 }
