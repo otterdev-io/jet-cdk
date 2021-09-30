@@ -1,3 +1,5 @@
+# 0.0.10 - September 29 2021
+- Properly back off the logger when there's real issues
 # 0.0.9 - September 29 2021
 - Format generated json
 # 0.0.8 - September 29 2021
