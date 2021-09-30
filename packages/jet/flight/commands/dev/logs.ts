@@ -44,7 +44,10 @@ export async function tailLogs(fn: DeployedFunction): Promise<ReInterval> {
           events.events[events.events.length - 1].timestamp ??
           lastReceivedTimestamp;
         refreshInterval = minRefreshInterval;
-        reInt.reschedule(refreshInterval);
+        //Make sure we're not rescheduling a destroyed interval
+        if (reInt._callback) {
+          reInt.reschedule(refreshInterval);
+        }
       }
     } catch (e) {
       // A lambda that has never logged will trigger this
@@ -59,7 +62,9 @@ export async function tailLogs(fn: DeployedFunction): Promise<ReInterval> {
         }
         if (refreshInterval < maxRefreshInterval) {
           refreshInterval = Math.min(refreshInterval * 2, maxRefreshInterval);
-          reInt.reschedule(refreshInterval);
+          if (reInt._callback) {
+            reInt.reschedule(refreshInterval);
+          }
         }
       }
     }

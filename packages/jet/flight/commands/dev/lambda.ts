@@ -1,6 +1,10 @@
 import { BaseConfigWithUserAndCommandStage } from '../../../common/config';
 import { outFilePath, runCdk } from '../../core/run-cdk';
-import { Lambda } from '@aws-sdk/client-lambda';
+import {
+  LambdaClient,
+  UpdateFunctionCodeCommand,
+  UpdateFunctionConfigurationCommandOutput,
+} from '@aws-sdk/client-lambda';
 import zip from 'jszip';
 import fsp from 'fs/promises';
 import { DeployedFunction, JetOutput, SynthedFunction } from '../common/types';
@@ -11,8 +15,9 @@ import { usagePrompt } from './prompt';
 import json5 from 'json5';
 import { getStacks } from '../common/outFile';
 import { ReInterval } from 'reinterval';
+import pMap from 'p-map';
 
-const lambda = new Lambda({});
+const lambda = new LambdaClient({});
 export async function processLambdas(
   doUpload: boolean,
   config: BaseConfigWithUserAndCommandStage<'dev'>
@@ -51,18 +56,16 @@ export async function processLambdas(
   });
 
   const stackFunctions = (
-    await Promise.all(
-      Object.entries(stacks).map(async ([stackName, stack]) => {
-        if (!stack.jet) {
-          console.error(
-            'No jet value in stack output. Did you add the jet function to the end?'
-          );
-          return [];
-        }
-        const jetOutput: JetOutput = await JSON.parse(stack.jet);
-        return [{ stackName, jetOutput }];
-      })
-    )
+    await pMap(Object.entries(stacks), async ([stackName, stack]) => {
+      if (!stack.jet) {
+        console.error(
+          'No jet value in stack output. Did you add the jet function to the end?'
+        );
+        return [];
+      }
+      const jetOutput: JetOutput = await JSON.parse(stack.jet);
+      return [{ stackName, jetOutput }];
+    })
   ).flatMap((s) =>
     s.flatMap((ss) =>
       ss.jetOutput.functions.map(
@@ -83,22 +86,19 @@ export async function processLambdas(
 
   if ([...stackFunctionsDict.keys()].length === 0) {
     console.info('Redeploy once you have some lambdas');
-    usagePrompt();
     return [];
   } else {
-    const tails = Promise.all(
-      [...stackFunctionsDict.values()].map(
-        async ({ stackName, assemblyOutDir, fn }) => {
-          if (doUpload) {
-            console.info(`Uploading ${fn.name}`);
-            await upload(stackName, assemblyOutDir, fn);
-          }
-          return tailLogs(fn);
+    return pMap(
+      [...stackFunctionsDict.values()],
+      async ({ stackName, assemblyOutDir, fn }) => {
+        if (doUpload) {
+          console.info(`Uploading ${fn.name}`);
+          await upload(stackName, assemblyOutDir, fn);
         }
-      )
+        return tailLogs(fn);
+      },
+      { concurrency: 1 }
     );
-    usagePrompt();
-    return tails;
   }
 }
 
@@ -106,7 +106,7 @@ async function upload(
   stackName: string,
   assemblyOutDir: string,
   fn: DeployedFunction
-) {
+): Promise<UpdateFunctionConfigurationCommandOutput | null> {
   const zipped = await makeZip(stackName, assemblyOutDir, fn);
   if (zipped) {
     return updateLambda(zipped, fn);
@@ -120,7 +120,7 @@ async function makeZip(
   stackName: string,
   assemblyOutDir: string,
   fn: DeployedFunction
-) {
+): Promise<Uint8Array | null> {
   const fnFile = await fsp.readFile(
     `${assemblyOutDir}/${stackName}.functions.json5`
   );
@@ -144,17 +144,23 @@ async function makeZip(
       }))
   );
   assetFiles.forEach(({ path, contents }) => assetZip.file(path, contents));
-  return await assetZip.generateAsync({
+  return assetZip.generateAsync({
     type: 'uint8array',
   });
 }
 
-async function updateLambda(zip: Uint8Array, fn: DeployedFunction) {
-  const response = await lambda.updateFunctionCode({
-    FunctionName: fn.name,
-    ZipFile: zip,
-  });
+async function updateLambda(
+  zip: Uint8Array,
+  fn: DeployedFunction
+): Promise<UpdateFunctionConfigurationCommandOutput> {
+  const response = await lambda.send(
+    new UpdateFunctionCodeCommand({
+      FunctionName: fn.name,
+      ZipFile: zip,
+    })
+  );
   console.info(response.LastUpdateStatus);
+  return response;
 }
 
 export async function lambdasNeedUploading(

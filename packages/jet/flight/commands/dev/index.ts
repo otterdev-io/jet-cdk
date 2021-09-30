@@ -7,6 +7,7 @@ import { emitKeypressEvents } from 'readline';
 import chalk from 'chalk';
 import { latestWatchedMtime } from './files';
 import { ReInterval } from 'reinterval';
+import { usagePrompt } from './prompt';
 
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
@@ -42,6 +43,7 @@ export async function runDev(
     try {
       clearTailTimeouts();
       tailTimeouts = await processLambdas(doUpload, config);
+      usagePrompt();
     } catch (e) {
       console.error(e);
       console.error(chalk.redBright(chalk.bgBlack('Error refreshing lambdas')));
