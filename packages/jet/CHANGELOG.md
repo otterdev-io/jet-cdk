@@ -1,4 +1,6 @@
-# 0.0.10 - September 29 2021
+# 0.0.11 - September 30 2021
+- Upload lambdas sequentially
+# 0.0.10 - September 30 2021
 - Properly back off the logger when there's real issues
 # 0.0.9 - September 29 2021
 - Format generated json
