@@ -6,6 +6,7 @@ import { lambdasNeedUploading, processLambdas } from './lambda';
 import { emitKeypressEvents } from 'readline';
 import chalk from 'chalk';
 import { latestWatchedMtime } from './files';
+import { ReInterval } from 'reinterval';
 
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
@@ -20,8 +21,10 @@ export async function runDev(
   configFile: string | undefined
 ) {
   let exit: () => void;
-  let tailTimeouts: NodeJS.Timeout[] = [];
-  const clearTailTimeouts = () => tailTimeouts.forEach(clearInterval);
+  let tailTimeouts: ReInterval[] = [];
+  const clearTailTimeouts = () => {
+    tailTimeouts.forEach((t) => t.destroy());
+  };
   fsp.mkdir(config.outDir, { recursive: true });
 
   // Our watcher that monitors for changes to any files, in order to re-upload lambdas

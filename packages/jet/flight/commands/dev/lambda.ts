@@ -3,24 +3,20 @@ import { outFilePath, runCdk } from '../../core/run-cdk';
 import { Lambda } from '@aws-sdk/client-lambda';
 import zip from 'jszip';
 import fsp from 'fs/promises';
-import {
-  DeployedFunction,
-  JetOutput,
-  Stack,
-  SynthedFunction,
-} from '../common/types';
+import { DeployedFunction, JetOutput, SynthedFunction } from '../common/types';
 import { tailLogs } from './logs';
 import { stackFilter } from '../../core/config';
 import chalk from 'chalk';
 import { usagePrompt } from './prompt';
 import json5 from 'json5';
 import { getStacks } from '../common/outFile';
+import { ReInterval } from 'reinterval';
 
 const lambda = new Lambda({});
 export async function processLambdas(
   doUpload: boolean,
   config: BaseConfigWithUserAndCommandStage<'dev'>
-): Promise<NodeJS.Timeout[]> {
+): Promise<ReInterval[]> {
   if (doUpload) {
     runCdk('synth', {
       cwd: config.projectDir,
@@ -90,7 +86,7 @@ export async function processLambdas(
     usagePrompt();
     return [];
   } else {
-    return Promise.all(
+    const tails = Promise.all(
       [...stackFunctionsDict.values()].map(
         async ({ stackName, assemblyOutDir, fn }) => {
           if (doUpload) {
@@ -101,6 +97,8 @@ export async function processLambdas(
         }
       )
     );
+    usagePrompt();
+    return tails;
   }
 }
 
