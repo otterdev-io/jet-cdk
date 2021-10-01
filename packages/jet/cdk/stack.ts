@@ -17,14 +17,14 @@ export function jetOutput(scope: Stack) {
   if (scope.node.tryGetContext('jet:dev') && assemblyOutDir) {
     const functions = scope.node
       .findAll()
-      .flatMap((c) => (isIFunction(c) ? [c] : []));
+      .flatMap((c) => (isIFunction(c) && hasCfnResource(c) ? [c] : []));
     const outputFunctions = functions.map((f) => ({
       id: f.node.id,
       name: f.functionName,
     }));
     const synthFunctions = functions.map((f) => ({
       id: f.node.id,
-      path: (f.node.defaultChild as CfnResource).getMetadata('aws:asset:path'),
+      path: f.node.defaultChild.getMetadata('aws:asset:path'),
     }));
 
     fsp.writeFile(
@@ -44,6 +44,12 @@ export function jetOutput(scope: Stack) {
 
 function isIFunction(c: IConstruct): c is lambda.IFunction {
   return 'functionArn' in c;
+}
+
+function hasCfnResource(
+  f: lambda.IFunction
+): f is lambda.IFunction & { node: { defaultChild: CfnResource } } {
+  return (f.node.defaultChild as CfnResource)?.getMetadata != null;
 }
 
 export async function writeValues(scope: Construct, props: WriteValues) {
