@@ -1,3 +1,5 @@
+# 0.0.12 - October 1 2021
+- Dont crash when detecting functions without a child node
 # 0.0.11 - September 30 2021
 - Upload lambdas sequentially
 # 0.0.10 - September 30 2021
