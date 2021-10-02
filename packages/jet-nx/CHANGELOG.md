@@ -1,3 +1,7 @@
+# 0.0.12 - September 29 2021
+Handle stack parameter
+# 0.0.11 - September 29 2021
+Bump jet version
 # 0.0.11 - September 29 2021
 Bump jet version
 # 0.0.10 - September 29 2021

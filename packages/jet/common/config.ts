@@ -1,8 +1,8 @@
-import { cosmiconfig } from 'cosmiconfig';
-import { CosmiconfigResult, LoadersSync } from 'cosmiconfig/dist/types';
+import { cosmiconfigSync } from 'cosmiconfig';
+import { LoadersSync } from 'cosmiconfig/dist/types';
 import json5 from 'json5';
 import merge from 'deepmerge';
-import fs from 'fs/promises';
+import fs from 'fs';
 import { STS } from '@aws-sdk/client-sts';
 import os from 'os';
 import path, { dirname } from 'path';
@@ -42,25 +42,25 @@ export type BaseConfigWithUserAndCommandStage<T extends string> =
  * Main file path can be set, but personal file will always override
  * @param path Path to main file to load
  */
-export async function loadConfig(
+export function loadConfig(
   projectDir: string | undefined,
   configPath: string | undefined
-): Promise<BaseConfigWithUser> {
+): BaseConfig {
   const loaders: LoadersSync = {
     '.json5': (_path, content) => json5.parse(content),
   };
-  const personalResult = await cosmiconfig('jet', {
+  const personalResult = cosmiconfigSync('jet', {
     loaders,
     searchPlaces: ['.jetrc.json5', '.jetrc', '.jetrc.json'],
   }).search(projectDir);
-  const mainExplorer = cosmiconfig('jet', {
+  const mainExplorer = cosmiconfigSync('jet', {
     loaders,
     searchPlaces: ['jet.config.json5', 'jet.config.json'],
   });
-  const mainResult = await (configPath
+  const mainResult = configPath
     ? mainExplorer.load(configPath)
-    : mainExplorer.search(projectDir));
-  const result = merge.all<BaseConfig>(
+    : mainExplorer.search(projectDir);
+  return merge.all<BaseConfig>(
     [
       normalizeOutDir(DefaultConfig, projectDir ?? '.'),
       mainResult ? normalizeOutDir(mainResult.config, mainResult.filepath) : {},
@@ -72,7 +72,6 @@ export async function loadConfig(
       arrayMerge: (target, source) => source,
     }
   );
-  return checkUser(result, projectDir);
 }
 
 /**
@@ -91,41 +90,35 @@ function normalizeOutDir(config: BaseConfig, relativePath: string) {
   );
 }
 
-export async function checkUser(
-  config: BaseConfig,
+export function writePersonalConfig(
+  username: string,
   projectDir: string | undefined
-): Promise<BaseConfigWithUser> {
-  if (!config.user) {
-    console.log(
-      'No user detected in config. Creating a personal config using IAM or OS username.'
-    );
-    const username = await getUserName();
-    const userConfig = {
-      user: username,
-    };
-    await fs.writeFile(
-      projectDir
-        ? path.join(projectDir, DefaultUserConfigPath)
-        : DefaultConfigPath,
-      json5.stringify(userConfig, undefined, 2)
-    );
-    return merge<BaseConfig, typeof userConfig>(config, userConfig);
-  }
-  return config as BaseConfigWithUser;
+) {
+  const userConfig = {
+    user: username,
+  };
+  fs.writeFileSync(
+    projectDir
+      ? path.join(projectDir, DefaultUserConfigPath)
+      : DefaultConfigPath,
+    json5.stringify(userConfig, undefined, 2)
+  );
 }
 
 /**
  * Get the name of the user, first try iam, then if that fails, from os.
  * @returns username
  */
-async function getUserName(): Promise<string> {
-  let identityArn: string | undefined;
+export async function getUsernameFromIam(): Promise<string | undefined> {
   try {
-    identityArn = (await new STS({}).getCallerIdentity({})).Arn;
+    const identityArn = (await new STS({}).getCallerIdentity({})).Arn;
+    return identityArn ? identityArn.split('/')[1] : undefined;
   } catch (e) {
     console.warn(`AWS Error: ${(e as Error).message}\n`);
-    console.warn('Unable to read IAM identity. Falling back to OS username.');
+    console.warn('Unable to read IAM identity.');
   }
-  const iamUser = identityArn ? identityArn.split('/')[1] : undefined;
-  return iamUser ?? os.userInfo().username;
+}
+
+export function getUsernameFromOs(): string {
+  return os.userInfo().username;
 }

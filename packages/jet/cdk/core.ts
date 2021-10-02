@@ -1,5 +1,9 @@
 import { Construct, Stage } from '@aws-cdk/core';
-import { loadConfig } from '../common/config';
+import {
+  getUsernameFromOs,
+  loadConfig,
+  writePersonalConfig,
+} from '../common/config';
 
 export class JetCoreStack extends Construct {
   constructor(
@@ -11,11 +15,17 @@ export class JetCoreStack extends Construct {
     //Add a context override just in case it is so desired
     const projectDir = this.node.tryGetContext('jet:project-dir');
     const configFile = this.node.tryGetContext('jet:config-file');
-    loadConfig(projectDir, configFile).then((config) => {
-      Object.entries(stages).forEach(([id, stage]) =>
-        stage(this, id.replace('{user}', config.user))
-      );
-    });
+    let user: string;
+    const config = loadConfig(projectDir, configFile);
+    if (config.user) {
+      user = config.user;
+    } else {
+      user = getUsernameFromOs();
+      writePersonalConfig(user, projectDir);
+    }
+    Object.entries(stages).forEach(([id, stage]) =>
+      stage(this, id.replace('{user}', user))
+    );
   }
 }
 

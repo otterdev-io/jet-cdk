@@ -13,7 +13,7 @@ import {
   SynthedFunction,
 } from '../common/types';
 import { tailLogs } from './logs';
-import { stackFilter } from '../../core/config';
+import { stackFilter } from '../../core/stacks';
 import chalk from 'chalk';
 import json5 from 'json5';
 import { ReInterval } from 'reinterval';
