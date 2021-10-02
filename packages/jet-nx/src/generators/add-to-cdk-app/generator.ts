@@ -72,7 +72,7 @@ export default async function (
           'out-dir': normalizedOptions.outDir,
         } as ListStagesExecutorSchema,
       },
-      deploy: {
+      'jet-deploy': {
         executor: '@jet-cdk/jet-nx:deploy',
         options: {
           'project-dir': normalizedOptions.projectRoot,

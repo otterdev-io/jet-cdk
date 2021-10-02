@@ -7,99 +7,103 @@ import {
 } from '@aws-sdk/client-lambda';
 import zip from 'jszip';
 import fsp from 'fs/promises';
-import { DeployedFunction, JetOutput, SynthedFunction } from '../common/types';
+import {
+  DeployedFunction,
+  ParsedStack,
+  SynthedFunction,
+} from '../common/types';
 import { tailLogs } from './logs';
 import { stackFilter } from '../../core/config';
 import chalk from 'chalk';
-import { usagePrompt } from './prompt';
 import json5 from 'json5';
-import { getStacks } from '../common/outFile';
 import { ReInterval } from 'reinterval';
 import pMap from 'p-map';
 
-const lambda = new LambdaClient({});
-export async function processLambdas(
+// For given stacks in config, upload all lambdas, then tail their cloudwatch logs
+export async function processStacksLambdas(
   doUpload: boolean,
-  config: BaseConfigWithUserAndCommandStage<'dev'>
+  config: BaseConfigWithUserAndCommandStage<'dev'>,
+  stacks: Map<string, ParsedStack>
 ): Promise<ReInterval[]> {
   if (doUpload) {
-    runCdk('synth', {
-      cwd: config.projectDir,
-      jetOutDir: config.outDir,
-      context: { dev: 'true' },
-      args: [
-        ...config.dev.synthArgs,
-        stackFilter(config.dev.stage, { user: config.user }),
-      ],
-    });
-    console.info('\nUploading lambdas...\n');
+    runSynth(config);
   } else {
     console.info(
       chalk.greenBright(chalk.bgBlack('Lambdas appear fresh, skipping upload'))
     );
   }
-  const stacks = await getStacks(config.outDir);
-  if (!Object.keys(stacks).length) {
-    console.info(chalk.bold('No stacks'));
-    usagePrompt();
-  }
 
-  Object.entries(stacks).forEach(async ([stackName, stack]) => {
-    console.log();
-    console.info(chalk.bold(stackName));
-    console.info(chalk.bold('Stack outputs (jet hidden):'));
-    const { jet, ...rest } = stack;
-    Object.entries(rest).forEach(([key, value]) => {
-      console.info(chalk.blueBright(chalk.bgBlack(`${key}: ${value}`)));
-    });
-    console.log();
-  });
+  const stackFunctions = await getStackFunctions(stacks);
 
-  const stackFunctions = (
-    await pMap(Object.entries(stacks), async ([stackName, stack]) => {
-      if (!stack.jet) {
-        console.error(
-          'No jet value in stack output. Did you add the jet function to the end?'
-        );
-        return [];
-      }
-      const jetOutput: JetOutput = await JSON.parse(stack.jet);
-      return [{ stackName, jetOutput }];
-    })
-  ).flatMap((s) =>
-    s.flatMap((ss) =>
-      ss.jetOutput.functions.map(
-        (fn) =>
-          [
-            fn.id,
-            {
-              stackName: ss.stackName,
-              assemblyOutDir: ss.jetOutput.assemblyOutDir,
-              fn,
-            },
-          ] as const
-      )
-    )
-  );
-  //Deduplicate by id
-  const stackFunctionsDict = new Map(stackFunctions);
-
-  if ([...stackFunctionsDict.keys()].length === 0) {
+  if (stackFunctions.size === 0) {
     console.info('Redeploy once you have some lambdas');
     return [];
   } else {
-    return pMap(
-      [...stackFunctionsDict.values()],
-      async ({ stackName, assemblyOutDir, fn }) => {
-        if (doUpload) {
-          console.info(`Uploading ${fn.name}`);
-          await upload(stackName, assemblyOutDir, fn);
-        }
-        return tailLogs(fn);
-      },
-      { concurrency: 1 }
-    );
+    return uploadAndTail(stackFunctions, doUpload);
   }
+}
+
+function uploadAndTail(
+  stackFunctions: Map<
+    string,
+    {
+      readonly stackName: string;
+      readonly assemblyOutDir: string;
+      readonly fn: DeployedFunction;
+    }
+  >,
+  doUpload: boolean
+) {
+  // Some functions seem to not have a name. Ignore those ones
+  const devFunctions = [...stackFunctions.values()].filter(({ fn }) => fn.name);
+  return pMap(
+    devFunctions,
+    async ({ stackName, assemblyOutDir, fn }) => {
+      if (doUpload) {
+        console.info(`Uploading ${fn.name}`);
+        await upload(stackName, assemblyOutDir, fn);
+      }
+      return tailLogs(fn);
+    },
+    { concurrency: 1 }
+  );
+}
+
+async function getStackFunctions(stacks: Map<string, ParsedStack>) {
+  return new Map(
+    (
+      await pMap(stacks.entries(), async ([stackName, stack]) =>
+        stack.jet.functions.map(
+          (fn) =>
+            [
+              fn.id,
+              {
+                stackName: stackName,
+                assemblyOutDir: stack.jet.assemblyOutDir,
+                fn,
+              },
+            ] as const
+        )
+      )
+    )
+      //Name filter since name not defined popped up once
+      // .flatMap((fn) => fn.filter((f) => f[1].fn.name))
+      .flatMap((fn) => fn)
+  );
+}
+
+function runSynth(config: BaseConfigWithUserAndCommandStage<'dev'>) {
+  return runCdk('synth', {
+    cwd: config.projectDir,
+    jetOutDir: config.outDir,
+    context: { dev: 'true' },
+    args: [
+      ...config.dev.synthArgs,
+      ...stackFilter(config.dev.stage, config.dev.stacks, {
+        user: config.user,
+      }),
+    ],
+  });
 }
 
 async function upload(
@@ -153,6 +157,7 @@ async function updateLambda(
   zip: Uint8Array,
   fn: DeployedFunction
 ): Promise<UpdateFunctionConfigurationCommandOutput> {
+  const lambda = new LambdaClient({});
   const response = await lambda.send(
     new UpdateFunctionCodeCommand({
       FunctionName: fn.name,
@@ -164,10 +169,11 @@ async function updateLambda(
 }
 
 export async function lambdasNeedUploading(
+  stage: string,
   outDir: string,
   lambdaMTime: number
 ): Promise<boolean> {
-  const outPath = outFilePath(outDir);
+  const outPath = outFilePath(stage, outDir);
   const outStat = await fsp.stat(outPath);
   return lambdaMTime > outStat.mtimeMs;
 }

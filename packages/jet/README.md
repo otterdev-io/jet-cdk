@@ -84,6 +84,16 @@ To deploy all stacks in a stage:
 npx jet deploy production
 ```
 
+To deploy to certain stacks within the stage:
+
+```sh
+npx jet deploy production --stacks backend
+```
+
+```sh
+npx jet deploy production
+```
+
 Since it's just a CDK app, you can also deploy stacks individually using cdk:
 To deploy all stacks in a stage:
 
@@ -106,6 +116,7 @@ The default configuration is:
   outDir: '.jet,
   dev: {
     stage: undefined,
+    stacks: undefined,
     watcher: {
       watch: ['lib/**/*'],
       ignore: ['node_modules'],
@@ -115,6 +126,7 @@ The default configuration is:
   },
   deploy: {
     stage: undefined,
+    stacks: undefined,
     deployArgs: [],
   },
   projectDir: '.',

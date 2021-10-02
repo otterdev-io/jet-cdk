@@ -1,4 +1,5 @@
 import {
+  App,
   Aspects,
   Construct,
   IAspect,
@@ -9,6 +10,9 @@ import {
 } from '@aws-cdk/core';
 import { StageBuilder } from './core';
 import { jetOutput } from './stack';
+import fs from 'fs';
+import path from 'path';
+import json5 from 'json5';
 
 export class JetStage extends Stage {
   constructor(
@@ -21,6 +25,16 @@ export class JetStage extends Stage {
     this.node.setContext('jet:assembly-out-dir', this._assemblyBuilder.outdir);
     this.node.setContext('jet:stage', id);
     stacks(this);
+    const stackIds = this.node.children
+      .filter((n) => n instanceof Stack)
+      .map((n) => n.node.id);
+    const outDir = this.node.tryGetContext('jet:out-dir');
+    if (outDir) {
+      fs.writeFileSync(
+        path.join(outDir, `${id}.stage.json5`),
+        json5.stringify({ stacks: stackIds })
+      );
+    }
     Aspects.of(this).add(new StackJetter());
   }
 }

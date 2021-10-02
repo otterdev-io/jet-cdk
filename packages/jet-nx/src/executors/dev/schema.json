@@ -17,6 +17,10 @@
         "index": 0
       }
     },
+    "stacks": {
+      "type": "array",
+      "description": "Stacks to develop against"
+    },
     "config": {
       "type": "string",
       "description": "Configuration file to read from",

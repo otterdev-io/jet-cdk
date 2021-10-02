@@ -7,6 +7,7 @@ export default async function runExecutor(options: DevExecutorSchema) {
       command: 'dev',
       projectDir: options['project-dir'],
       stage: options.stage,
+      stacks: options.stacks,
       config: options.config,
       outDir: options['out-dir'],
       synthArgs: options['synth-args']?.split(' '),

@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import child_process from 'child_process';
 import npmRunPath from 'npm-run-path';
 import path from 'path';
+import merge from 'deepmerge';
 
 export function runCdk(
   command: string,
@@ -13,7 +14,8 @@ export function runCdk(
     stdio?: child_process.StdioOptions;
   }
 ) {
-  const contextArr = Object.entries(pars.context ?? {}).flatMap(([k, v]) => [
+  const context = merge({ 'out-dir': pars.jetOutDir }, pars.context ?? {});
+  const contextArr = Object.entries(context).flatMap(([k, v]) => [
     '-c',
     `jet:${k}=${v}`,
   ]);
@@ -42,6 +44,6 @@ export function runCdk(
   return result;
 }
 
-export function outFilePath(outDir: string) {
-  return path.join(outDir, 'cdk-outputs.json');
+export function outFilePath(stage: string, outDir: string) {
+  return path.join(outDir, `${stage}.outputs.json`);
 }

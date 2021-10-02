@@ -2,7 +2,7 @@ import cleanDeep from 'clean-deep';
 import { BaseConfigWithUserAndCommandStage } from '../../common/config';
 import { stackFilter } from '../core/config';
 import { runCdk } from '../core/run-cdk';
-import { writeValues } from './common/writeValues';
+import { writeValues } from './common/write-values';
 
 export function runDeploy(
   config: BaseConfigWithUserAndCommandStage<'deploy'>,
@@ -17,8 +17,10 @@ export function runDeploy(
     }),
     args: [
       ...config.deploy.deployArgs,
-      stackFilter(config.deploy.stage, { user: config.user }),
+      ...stackFilter(config.deploy.stage, config.dev.stacks, {
+        user: config.user,
+      }),
     ],
   });
-  writeValues(config.outDir, config.projectDir);
+  writeValues(config.deploy.stage, config.outDir, config.projectDir);
 }

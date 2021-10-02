@@ -2,12 +2,18 @@ import fsp from 'fs/promises';
 import { watch } from 'chokidar';
 import { BaseConfigWithUserAndCommandStage } from '../../../common/config';
 import { deployIfNecessary, doDeploy } from './deploy';
-import { lambdasNeedUploading, processLambdas } from './lambda';
+import {
+  lambdasNeedUploading,
+  processStacksLambdas,
+} from './process-stacks-lambdas';
 import { emitKeypressEvents } from 'readline';
 import chalk from 'chalk';
 import { latestWatchedMtime } from './files';
 import { ReInterval } from 'reinterval';
 import { usagePrompt } from './prompt';
+import { getStacks } from '../common/outFile';
+import { ParsedStack } from '../common/types';
+import { outFilePath } from '../../core/run-cdk';
 
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
@@ -38,11 +44,17 @@ export async function runDev(
   const lambdaMTime = await latestWatchedMtime(lambdaWatcher);
   const didDeploy = await deployIfNecessary(config, lambdaMTime, configFile);
 
+  const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
+  const allStacks = await getStacks(stackOutputsPath);
+  const stacks = filterStacks(config, allStacks);
+  printStackOutputs(stacks);
   // Re-process lambdas, possibly uploading, then tailing logs
   const refreshLambdas = async (doUpload: boolean) => {
     try {
       clearTailTimeouts();
-      tailTimeouts = await processLambdas(doUpload, config);
+      tailTimeouts = await processStacksLambdas(doUpload, config, stacks);
+      //Touch output file, so that we won't need to redeploy on re-launchbased on these changes
+      await fsp.utimes(stackOutputsPath, new Date(), new Date());
       usagePrompt();
     } catch (e) {
       console.error(e);
@@ -52,7 +64,8 @@ export async function runDev(
   const uploadRefreshLambdas = () => refreshLambdas(true);
   lambdaWatcher.on('change', uploadRefreshLambdas);
   await refreshLambdas(
-    !didDeploy && (await lambdasNeedUploading(config.outDir, lambdaMTime))
+    !didDeploy &&
+      (await lambdasNeedUploading(config.dev.stage, config.outDir, lambdaMTime))
   );
 
   //Handle pressing 'ctrl-c' or 'x' to exit, and 'd' to deploy
@@ -94,5 +107,33 @@ export async function runDev(
         resolve();
       }
     };
+  });
+}
+
+//Return the stacks specified in config, out of allStacks
+function filterStacks(
+  config: BaseConfigWithUserAndCommandStage<'dev'>,
+  allStacks: Map<string, ParsedStack>
+) {
+  return config.dev.stacks
+    ? new Map(
+        [...allStacks.entries()].filter(([name, stack]) =>
+          config.dev.stacks?.includes(stack.jet.id)
+        )
+      )
+    : allStacks;
+}
+
+// Print the cfn outputs of the given stacks, hiding jet
+function printStackOutputs(stacks: Map<string, ParsedStack>) {
+  stacks.forEach((stack, stackName) => {
+    console.log();
+    console.info(chalk.bold(stackName));
+    console.info(chalk.bold('Stack outputs (jet hidden):'));
+    const { jet, ...rest } = stack;
+    Object.entries(rest).forEach(([key, value]) => {
+      console.info(chalk.blueBright(chalk.bgBlack(`${key}: ${value}`)));
+    });
+    console.log();
   });
 }

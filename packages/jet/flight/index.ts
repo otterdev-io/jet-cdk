@@ -11,7 +11,6 @@ import { listStages } from './commands/list-stages';
 import { runDev } from './commands/dev';
 import { runDeploy } from './commands/deploy';
 import path from 'path';
-import { writeValues } from './commands/common/writeValues';
 
 /**
  * Main entry point to jet run
@@ -69,11 +68,13 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
       projectDir: args.projectDir,
       dev: {
         stage: args.stage,
+        stacks: args.stacks,
         synthArgs: args.synthArgs,
         deployArgs: args.deployArgs,
       },
       deploy: {
         stage: args.stage,
+        stacks: args.stacks,
         deployArgs: args.deployArgs,
       },
     },
