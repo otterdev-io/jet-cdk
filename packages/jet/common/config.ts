@@ -109,7 +109,7 @@ export function writePersonalConfig(
  * Get the name of the user, first try iam, then if that fails, from os.
  * @returns username
  */
-export async function getUsernameFromIam(): Promise<string | undefined> {
+export async function getUsernameFromIAM(): Promise<string | undefined> {
   try {
     const identityArn = (await new STS({}).getCallerIdentity({})).Arn;
     return identityArn ? identityArn.split('/')[1] : undefined;
@@ -119,6 +119,6 @@ export async function getUsernameFromIam(): Promise<string | undefined> {
   }
 }
 
-export function getUsernameFromOs(): string {
+export function getUsernameFromOS(): string {
   return os.userInfo().username;
 }

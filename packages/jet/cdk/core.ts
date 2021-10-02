@@ -1,11 +1,11 @@
 import { Construct, Stage } from '@aws-cdk/core';
 import {
-  getUsernameFromOs,
+  getUsernameFromOS,
   loadConfig,
   writePersonalConfig,
 } from '../common/config';
 
-export class JetCoreStack extends Construct {
+export class JetCore extends Stage {
   constructor(
     scope: Construct,
     id: string,
@@ -20,12 +20,12 @@ export class JetCoreStack extends Construct {
     if (config.user) {
       user = config.user;
     } else {
-      user = getUsernameFromOs();
+      user = getUsernameFromOS();
       writePersonalConfig(user, projectDir);
     }
-    Object.entries(stages).forEach(([id, stage]) =>
-      stage(this, id.replace('{user}', user))
-    );
+    Object.entries(stages).forEach(([id, stage]) => {
+      stage(this, id.replace('{user}', user));
+    });
   }
 }
 

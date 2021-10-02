@@ -1,6 +1,7 @@
 import {
   addDependenciesToPackageJson,
   generateFiles,
+  logger,
   readProjectConfiguration,
   Tree,
   updateProjectConfiguration,
@@ -11,6 +12,7 @@ import { DevExecutorSchema } from '../../executors/dev/schema';
 import { ListStagesExecutorSchema } from '../../executors/list-stages/schema';
 import { AddToCdkAppGeneratorSchema } from './schema';
 import * as versions from '../versions';
+import ignore from 'ignore';
 
 interface NormalizedSchema extends AddToCdkAppGeneratorSchema {
   project: string;
@@ -44,6 +46,23 @@ function addFiles(host: Tree, options: NormalizedSchema) {
     options.projectRoot,
     templateOptions
   );
+}
+export function addGitIgnoreEntry(host: Tree) {
+  if (!host.exists('.gitignore')) {
+    logger.warn(`Couldn't find .gitignore file to update`);
+    return;
+  }
+
+  let content = host.read('.gitignore')?.toString('utf-8').trimRight() ?? '';
+
+  const ig = ignore();
+  ig.add(content);
+
+  if (!ig.ignores('.jetrc.*')) {
+    content = `${content}\n.jetrc.*\n`;
+  }
+
+  host.write('.gitignore', content);
 }
 
 export default async function (
@@ -83,6 +102,7 @@ export default async function (
     },
   });
   addFiles(tree, normalizedOptions);
+  addGitIgnoreEntry(tree);
   return addDependenciesToPackageJson(
     tree,
     {
