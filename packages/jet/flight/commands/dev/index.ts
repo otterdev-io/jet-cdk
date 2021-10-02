@@ -14,6 +14,7 @@ import { usagePrompt } from './prompt';
 import { getStacks } from '../common/outFile';
 import { ParsedStack } from '../common/types';
 import { outFilePath } from '../../core/run-cdk';
+import { stacksToDev } from '../../core/stacks';
 
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
@@ -46,7 +47,12 @@ export async function runDev(
 
   const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
   const allStacks = await getStacks(stackOutputsPath);
-  const stacks = filterStacks(config, allStacks);
+  const devStacks = await stacksToDev(
+    config.dev.stage,
+    config.dev.stacks,
+    config.outDir
+  );
+  const stacks = filterStacks(devStacks, allStacks);
   printStackOutputs(stacks);
   // Re-process lambdas, possibly uploading, then tailing logs
   const refreshLambdas = async (doUpload: boolean) => {
@@ -111,17 +117,12 @@ export async function runDev(
 }
 
 //Return the stacks specified in config, out of allStacks
-function filterStacks(
-  config: BaseConfigWithUserAndCommandStage<'dev'>,
-  allStacks: Map<string, ParsedStack>
-) {
-  return config.dev.stacks
-    ? new Map(
-        [...allStacks.entries()].filter(([name, stack]) =>
-          config.dev.stacks?.includes(stack.jet.id)
-        )
-      )
-    : allStacks;
+function filterStacks(stacks: string[], allStacks: Map<string, ParsedStack>) {
+  return new Map(
+    [...allStacks.entries()].filter(([name, stack]) =>
+      stacks.includes(stack.jet.id)
+    )
+  );
 }
 
 // Print the cfn outputs of the given stacks, hiding jet

@@ -2,8 +2,7 @@ import { BaseConfigWithUserAndCommandStage } from '../../../common/config';
 import fsp from 'fs/promises';
 import fs from 'fs';
 import { outFilePath, runCdk } from '../../core/run-cdk';
-import { stackFilter } from '../../core/config';
-import { Stack } from '../common/types';
+import { stacksToDev, stackFilter } from '../../core/stacks';
 import chalk from 'chalk';
 import cleanDeep from 'clean-deep';
 import { writeValues } from '../common/write-values';
@@ -24,19 +23,16 @@ export async function deployIfNecessary(
   let deploy = false;
   const outPath = outFilePath(config.dev.stage, config.outDir);
   if (!fs.existsSync(outPath)) {
-    console.info('No deployment outputs file exists');
+    console.info(
+      chalk.bgBlack(chalk.blue('No deployment outputs file exists'))
+    );
     deploy = true;
   } else {
     const outStat = await fsp.stat(outPath);
     if (outStat.mtimeMs < lambdaMTime) {
-      console.info('Source file has changed since last deploy');
-      deploy = true;
-    }
-    let stacks: string[] = [];
-    try {
-      stacks = await getAllStageStacks(config.dev.stage, config.outDir);
-    } catch (e) {
-      console.info("Couldn't open stage info file");
+      console.info(
+        chalk.bgBlack(chalk.blue('Source file has changed since last deploy'))
+      );
       deploy = true;
     }
     //Check that all requested stacks have been deployed
@@ -47,10 +43,23 @@ export async function deployIfNecessary(
         (stack) => stack.jet.id
       );
     } catch (e) {
-      console.warn('Couldnt open stage outputs file');
+      console.info(
+        chalk.bgBlack(chalk.blue('Couldnt open stage outputs file'))
+      );
       deploy = true;
     }
-    const undeployed = (config.dev.stacks ?? stacks).filter(
+    let devStacks: string[] = [];
+    try {
+      devStacks = await stacksToDev(
+        config.dev.stage,
+        config.dev.stacks,
+        config.outDir
+      );
+    } catch (e) {
+      console.info(chalk.bgBlack(chalk.blue('Couldnt open stacks info file')));
+      deploy = true;
+    }
+    const undeployed = devStacks.filter(
       (stack) => !deployedStackIds.includes(stack)
     );
     if (undeployed.length > 0) {
@@ -98,19 +107,4 @@ export function doDeploy(
     ],
   });
   writeValues(config.dev.stage, config.outDir, config.projectDir);
-}
-/**
- * return all the stacks listed in the stage info file
- * @param stage
- * @param outDir
- */
-async function getAllStageStacks(
-  stage: string,
-  outDir: string
-): Promise<string[]> {
-  const infoFile = await fsp.readFile(
-    path.join(outDir, `${stage}.stage.json5`)
-  );
-  const stageData = json5.parse(infoFile.toString());
-  return stageData.stacks;
 }

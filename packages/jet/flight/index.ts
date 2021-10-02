@@ -1,7 +1,10 @@
 import {
   BaseConfigWithUser,
   BaseConfigWithUserAndCommandStage,
+  getUsernameFromIam,
+  getUsernameFromOs,
   loadConfig,
+  writePersonalConfig,
 } from '../common/config';
 import { Args } from './core/args';
 import merge from 'deepmerge';
@@ -59,7 +62,15 @@ export async function flight(standalone: boolean, args: Args) {
  * @returns
  */
 async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
-  const c = await loadConfig(args.projectDir, args.config);
+  const baseConfig = loadConfig(args.projectDir, args.config);
+  let config: BaseConfigWithUser;
+  if (baseConfig.user) {
+    config = baseConfig as BaseConfigWithUser;
+  } else {
+    const username = (await getUsernameFromIam()) ?? getUsernameFromOs();
+    writePersonalConfig(username, args.projectDir);
+    config = { ...baseConfig, user: username };
+  }
   //The deep clean is important to make sure we dont overwrite values from the config with unset args
   const argsConfig = cleanDeep(
     {
@@ -81,7 +92,7 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
     { undefinedValues: true }
   );
   const mergedConfig = merge<BaseConfigWithUser, typeof argsConfig>(
-    c,
+    config,
     argsConfig
   );
   //Substitute user back into our stages

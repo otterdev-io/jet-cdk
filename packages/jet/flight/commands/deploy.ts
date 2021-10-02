@@ -1,10 +1,10 @@
 import cleanDeep from 'clean-deep';
 import { BaseConfigWithUserAndCommandStage } from '../../common/config';
-import { stackFilter } from '../core/config';
+import { stackFilter } from '../core/stacks';
 import { runCdk } from '../core/run-cdk';
 import { writeValues } from './common/write-values';
 
-export function runDeploy(
+export async function runDeploy(
   config: BaseConfigWithUserAndCommandStage<'deploy'>,
   configFile: string | undefined
 ) {
