@@ -111,6 +111,7 @@ export default async function (
     },
     {
       '@types/aws-lambda': versions.typesAwsLambda,
+      esbuild: versions.esbuild,
     }
   );
 }

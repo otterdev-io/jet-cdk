@@ -1,3 +1,5 @@
+# 0.1.1 - October 3 2021
+- Add esbuild to generated project
 # 0.1.0 - October 3 2021
 - Flag compatibility with jet 0.1.0
 # 0.0.12 - September 29 2021
