@@ -8,10 +8,10 @@ import {
 export class JetCore extends Stage {
   constructor(
     scope: Construct,
-    id: string,
+    appId: string,
     stages: Record<string, StageBuilder>
   ) {
-    super(scope, id);
+    super(scope, appId);
     //Add a context override just in case it is so desired
     const projectDir = this.node.tryGetContext('jet:project-dir');
     const configFile = this.node.tryGetContext('jet:config-file');

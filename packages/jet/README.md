@@ -1,24 +1,42 @@
 # Jet CDK
 
-Soar through the Clouds with Jet. Jet CDK is a lightweight toolkit for developing serverless apps with the AWS CDK. This package contains jet, a cli tool which provides a live lambda development environment through rapid deploys and logging.
+Soar through the Clouds with Jet. Jet CDK is a lightweight toolkit to transform the AWS CDK into a serverless app development environment. This package contains jet, a dev server which provides a live lambda development environment through rapid deploys and near-realtime logging.
 
 # Features:
 - Uses CDK Stages to give you configurable and per-developer deployment environments. 
 - dev mode, which watches your code and updates your lambdas when they change, while also monitoring your app's logs. This allows for a quick development cycle, while avoiding the troubles that come with attempting to locally emulate an AWS environment. 
-  - This is similar to the approach taken by `SST`, however Jet attempts to be a minimal layer over CDK. It simply deploys your lambdas using AWS apis, rather than proxying to local running ones. 
-    - This has a few drawbacks, such as a small delay to upload updates, and a ~5 delay of cloudwatch logs, as well as no debugging support. 
-    - However this avoids the need for extra development infrastructure, as your development deployments are virtually identical to production ones, and allows the app to be closer to raw CDK in structure.
-- (Soon) `Afterburner`, an optional and standalone construct library to simplify API (`API Gateway` and `Appsync`) routing. I've written it, just need to package it :D
+- [Afterburner](https://www.npmjs.com/package/@jet-cdk/afterburner), an optional and standalone construct library to simplify API (`API Gateway` and `Appsync`) routing for CDK nodejs. Combined with the Jet runner, turns the CDK into an efficient nodejs serverless app development environment.
 - First class support for `Nx`, with `@jet-cdk/jet-nx`.
+# Comparison with SST
+The 'live cloud development' technique is similar to the style of `SST`, however Jet attempts to take a more minimal approach. Where SST proxyies deployed lambdas to locally running ones, Jet simply watches for source code changes, and redeploys your lambdas using AWS APIs instead of going through a full redploy.
+    - [-] There is a small delay to upload updates, and a ~5 delay of relaying to cloudwatch logs. SST provides instant reloads and logging.
+    - [-] No debugging support. SST provides local debugging.
+    - [+] No extra development infrastructure, as your development deployments are virtually identical to production ones. SST deploys a development stack to support operations.
+    - [+] Minimal code changes from raw CDK. Any function construct should be supported, and pure CDK stacks can be used. This should ease interoperability with 3rd party constructs and cdk extensions like pipelines.
+     
+# Install
+Assuming you're in a CDK app:
 
-# Usage
-
-## Install
 ```sh
 npm install @jet-cdk/jet
 ```
-## Setup
-In your cdk app main file, create a `JetCore`, and configure it with the stages you want to deploy. If a stage has `{user}` in the name, the token will be replaced with the user's name from their configuration, which is initially pulled from IAM, or their os username. The stacks will be listed by the cdk as <Core id>/<stage>/<stack id>
+
+And follow the Setup and Usage instructions.
+
+If you have an Nx workspace, simply:
+```sh
+npm install -D @jet-cdk/jet-nx
+nx g @jet-cdk/jet-nx:jet-cdk-app 
+```
+To set up a project ready to run, you can skip the rest of the guide. Read the [page for jet-nx](https://www.npmjs.com/package/@jet-cdk/jet-nx) for instructions on usage.
+# Setup
+In your cdk app main file, create a `JetCore`, and configure it with the stages you want to deploy. The arguments to JetCore are the parent app construct, app id, and an object mapping stage names to the stage definition.
+
+A stage is defined with the function `jetStage`, which takes a function with an argument of the stage itself, and uses it to create a set of stacks, using the stage as a parent.
+
+If a stage has the token `{user}` in the name, the token will be replaced with the `user` attribute from their configuration. When a developer's personal configuration `(.jetrc.json5)` is automatically initialised on first run, it will attempt to set `user` as their user from IAM, falling back or their OS username if that is unavailable. 
+
+The stacks will be listed by the cdk as `app id/stage key/stack id`, and created in cloudformation with a normalised name of `app id-stage key-stack id`.
 
 ```ts
 // bin/my-app.ts
@@ -41,13 +59,15 @@ new JetCore(app, "MyApp", {
   }),
   production: jetStage((stage) => {
     new  WebServiceStack(stage, "WebService");
-    new FrontendStack(stage, "Frontend")
-  }, {env: {region: 'ap-southeast-1'}}),
+    new FrontendStack(stage, "Frontend"), {
+      env: {region: 'ap-southeast-1'}
+    }),
 });
 ```
-That's it! Any existing lambdas you have in your stacks will be detected automatically, for live uploading and logging.
 
-## Verify
+That's it! Any existing lambdas you have in your stacks will be detected automatically, and will be watched for live uploading and logging.
+
+# Verify
 Verify that the stages are set up properly:
 
 ```sh
@@ -85,7 +105,7 @@ npx jet dev dev-chris --stacks WebService
 
 The stacks option can also be placed in `dev.stacks` and `deploy.stacks` in the project configuration to set defaults for development and deployment respectively. Undefined runs all stacks, as does any value being '*'.
 
-## Deploy
+# Deploy
 To deploy all stacks in a stage:
 
 ```sh
@@ -163,6 +183,6 @@ writeValues(this, {
 Don't forget to add `.jetrc.json5` and `.jet` to your gitignore.
 
 # Node development
-If you are using Node functions, you may want to install `esbuild` in your repo, otherwise cdk will set up a docker environment to build your functions, which can take some time.
+If you are using Node functions, you may want to install `esbuild` in your app's dependencies, otherwise cdk will set up a docker environment to build your functions, which can take some time.
 
-# More documentation to come!
+## More documentation to come!
