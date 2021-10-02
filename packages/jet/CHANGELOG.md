@@ -1,4 +1,5 @@
-
+# 0.1.0 - October 3 2021
+- Rename JetCoreStack to JetCore, make it a stage so its name affects stack name generation
 # 0.0.15 - October 3 2021
 - Support specifying stacks to develop/deploy
 # 0.0.14 - October 2 2021

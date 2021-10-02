@@ -1,8 +1,8 @@
 import {
   BaseConfigWithUser,
   BaseConfigWithUserAndCommandStage,
-  getUsernameFromIam,
-  getUsernameFromOs,
+  getUsernameFromIAM,
+  getUsernameFromOS,
   loadConfig,
   writePersonalConfig,
 } from '../common/config';
@@ -67,7 +67,7 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
   if (baseConfig.user) {
     config = baseConfig as BaseConfigWithUser;
   } else {
-    const username = (await getUsernameFromIam()) ?? getUsernameFromOs();
+    const username = (await getUsernameFromIAM()) ?? getUsernameFromOS();
     writePersonalConfig(username, args.projectDir);
     config = { ...baseConfig, user: username };
   }

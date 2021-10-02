@@ -18,7 +18,7 @@ Soar through the Clouds with Jet. Jet CDK is a lightweight toolkit for developin
 npm install @jet-cdk/jet
 ```
 ## Setup
-In your cdk app main file, add a `JetCoreStack`, and configure it with the stages you want to deploy. If a stage has `{user}` in the name, the token will be replaced with the user's name from their configuration, which is initially pulled from IAM, or their os username.
+In your cdk app main file, create a `JetCore`, and configure it with the stages you want to deploy. If a stage has `{user}` in the name, the token will be replaced with the user's name from their configuration, which is initially pulled from IAM, or their os username. The stacks will be listed by the cdk as <Core id>/<stage>/<stack id>
 
 ```ts
 // bin/my-app.ts
@@ -27,24 +27,25 @@ In your cdk app main file, add a `JetCoreStack`, and configure it with the stage
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { MyAppStack } from '../lib/my-app-stack';
-import { JetCoreStack, jetStage } from '@jet-cdk/jet/cdk';
+import { JetCore, jetStage } from '@jet-cdk/jet/cdk';
 
 const app = new cdk.App();
 
-new JetCoreStack(app, "MyApp", {
+new JetCore(app, "MyApp", {
   'dev-{user}': jetStage((stage) => {
     new  WebServiceStack(stage, "WebService");
   }),
   staging: jetStage((stage) => {
     new  WebServiceStack(stage, "WebService");
+    new FrontendStack(stage, "Frontend")
   }),
   production: jetStage((stage) => {
     new  WebServiceStack(stage, "WebService");
+    new FrontendStack(stage, "Frontend")
   }, {env: {region: 'ap-southeast-1'}}),
 });
 ```
-
-That's it! Any existing lambdas you have in your stacks will be detected automatically.
+That's it! Any existing lambdas you have in your stacks will be detected automatically, for live uploading and logging.
 
 ## Verify
 Verify that the stages are set up properly:
@@ -62,9 +63,9 @@ You can see that these are just plain CDK stacks:
 
 ```sh
 $ npx cdk list
-MyApp/dev-chris/WebServiceStack
-MyApp/staging/WebServiceStack
-MyApp/production/WebServiceStack
+MyApp/dev-chris/WebService
+MyApp/staging/WebService
+MyApp/production/WebService
 ```
 
 ## Develop
@@ -76,6 +77,13 @@ npx jet dev dev-chris
 
 Jet will perform an initial deploy, and then monitor your code for updates to rapidly update functions. Any logs from your functions will also be emitted.
 
+If you want to develop against lambdas only in certain stacks:
+
+```sh
+npx jet dev dev-chris --stacks WebService
+```
+
+The stacks option can also be placed in `dev.stacks` and `deploy.stacks` in the project configuration to set defaults for development and deployment respectively. Undefined runs all stacks, as does any value being '*'.
 
 ## Deploy
 To deploy all stacks in a stage:
@@ -87,24 +95,19 @@ npx jet deploy production
 To deploy to certain stacks within the stage:
 
 ```sh
-npx jet deploy production --stacks backend
+npx jet deploy production --stacks WebService
 ```
 
-```sh
-npx jet deploy production
-```
-
-Since it's just a CDK app, you can also deploy stacks individually using cdk:
-To deploy all stacks in a stage:
+Since it's just a CDK app, you can also deploy stacks using cdk:
 
 ```sh
-npx cdk deploy MyApp/production/WebServiceStack
+npx cdk deploy MyApp/production/WebService
 ```
 
 # Configuration
 Jet will read from two config files, `.jetrc.json5`, for developer-specific configuration, and `jet.config.json5`, for project-wide configuration. Both files can set any configuration value, with `.jetrc.json5` taking precedence. 
 
-If it doesn't exist, `.jetrc.json5` will be created with `user` set to your IAM username, or if that's unreadable, your os username.
+If it doesn't exist, `.jetrc.json5` will be created with `user` set to your IAM username, or if that's unreadable, your OS username.
 
 You may also pass the `--config` / `-c` flag to provide an alternate project-wide configuration.
 
@@ -113,27 +116,27 @@ The default configuration is:
 ```js
 {
   user: undefined,
-  outDir: '.jet,
+  outDir: '.jet',
   dev: {
-    stage: undefined,
-    stacks: undefined,
+    stage: undefined, //eg. 'dev-{user}'
+    stacks: undefined, //eg ['WebService']
     watcher: {
       watch: ['lib/**/*'],
       ignore: ['node_modules'],
     },
-    synthArgs: [],
-    deployArgs: [],
+    synthArgs: [], //args to pass to 'cdk synth'
+    deployArgs: [], //args to pass to 'cdk deploy'
   },
   deploy: {
-    stage: undefined,
-    stacks: undefined,
-    deployArgs: [],
+    stage: undefined, //eg. 'production'
+    stacks: undefined, //eg. ['WebService']
+    deployArgs: [], //args to pass to 'cdk deploy'
   },
-  projectDir: '.',
+  projectDir: '.', //Base directory of the project. Where config files will be searched from, cdk run from, watcher paths relative to. You probably want to set it via the --project-dir arg instead
 }
 ```
 
-The `stage` settings once defined allow you to provide default stages for the `dev` and deploy commands, so that you can just run `jet dev` / `jet deploy` to use the defaults.
+The `stage` and `stacks` settings once defined allow you to provide default stages and stacks for the `dev` and deploy commands, so that you can just run `jet dev` / `jet deploy` to use the defaults.
 
 # Exporting values to a file
 A function `writeValues` is provided in `@jet-cdk/jet/cdk` which allows you export a file containing the provided values, in json, json5, or env format. This is useful when locally running applications, eg a frontend, depend on values from your deployed backend. The file is generated after each deployment, so if you just added it, and your jet is running, press d to deploy again.
@@ -142,13 +145,17 @@ A function `writeValues` is provided in `@jet-cdk/jet/cdk` which allows you expo
 writeValues(this, {
   path: path.join(__dirname, "../../frontend/.env.backend.local"),
   values: {
-    NEXT_PUBLIC_REGION: this.region,
-    NEXT_PUBLIC_USER_POOL_WEB_CLIENT_ID: clientId,
-    NEXT_PUBLIC_USER_POOL_ID: userPool.userPoolId,
-    NEXT_PUBLIC_GRAPHQL_AUTHENTICATION_TYPE: appsync.AuthorizationType.USER_POOL,
     NEXT_PUBLIC_GRAPHQL_ENDPOINT: api.graphqlUrl,
   },
   format: "env",
+});
+
+//JSON example
+writeValues(this, {
+  path: path.join(__dirname, "../../frontend/.env.backend.local.json"),
+  values: {
+    graphqlUrl: api.graphqlUrl,
+  }
 });
 ```
 
