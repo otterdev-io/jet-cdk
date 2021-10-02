@@ -17,7 +17,9 @@ export function jetOutput(scope: Stack) {
   if (scope.node.tryGetContext('jet:dev') && assemblyOutDir) {
     const functions = scope.node
       .findAll()
-      .flatMap((c) => (isIFunction(c) && hasCfnResource(c) ? [c] : []));
+      .flatMap((c) =>
+        isIFunction(c) && hasCfnResource(c) && c.functionName ? [c] : []
+      );
     const outputFunctions = functions.map((f) => ({
       id: f.node.id,
       name: f.functionName,
@@ -34,6 +36,7 @@ export function jetOutput(scope: Stack) {
 
     new CfnOutput(scope, 'jet', {
       value: JSON.stringify({
+        id: scope.node.id,
         functions: outputFunctions,
         assemblyOutDir,
         writeValues: (scope as any)[keyWriteValues],

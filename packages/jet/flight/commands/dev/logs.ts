@@ -20,7 +20,7 @@ export async function tailLogs(fn: DeployedFunction): Promise<ReInterval> {
     try {
       const events = await cw.send(
         new FilterLogEventsCommand({
-          logGroupName: `/aws/lambda/${fn.name}`,
+          logGroupName: `/aws/lambda/${fn.name.split(':')[0]}`,
           startTime: lastReceivedTimestamp,
         })
       );

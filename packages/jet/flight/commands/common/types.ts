@@ -1,8 +1,12 @@
 export interface Stack {
   jet: string;
 }
+export interface ParsedStack extends Record<string, any> {
+  jet: JetOutput;
+}
 
 export interface JetOutput {
+  id: string;
   functions: DeployedFunction[];
   assemblyOutDir: string;
   writeValues: WriteValues[];

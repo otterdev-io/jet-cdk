@@ -1,3 +1,10 @@
+
+# 0.0.15 - October 3 2021
+- Support specifying stacks to develop/deploy
+# 0.0.14 - October 2 2021
+- Fix crash when function name is undefined
+# 0.0.13 - October 2 2021
+- Fix crash when function name has ':' in it
 # 0.0.12 - October 1 2021
 - Dont crash when detecting functions without a child node
 # 0.0.11 - September 30 2021

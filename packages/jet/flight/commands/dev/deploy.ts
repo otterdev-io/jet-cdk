@@ -6,35 +6,57 @@ import { stackFilter } from '../../core/config';
 import { Stack } from '../common/types';
 import chalk from 'chalk';
 import cleanDeep from 'clean-deep';
-import { writeValues } from '../common/writeValues';
+import { writeValues } from '../common/write-values';
+import { getStacks } from '../common/outFile';
+import path from 'path';
+import json5 from 'json5';
 
+/**  Do a deploy if:
+ * - Theres no outputs file
+ * - outputs file isn't modified as recently as source has been changed
+ * - The desired dev stacks arent in the outputs file
+ **/
 export async function deployIfNecessary(
   config: BaseConfigWithUserAndCommandStage<'dev'>,
   lambdaMTime: number,
   configFile: string | undefined
 ): Promise<boolean> {
   let deploy = false;
-  const outPath = outFilePath(config.outDir);
-  try {
-    if (!fs.existsSync(outPath)) {
-      console.info('No deployment outputs file exists');
+  const outPath = outFilePath(config.dev.stage, config.outDir);
+  if (!fs.existsSync(outPath)) {
+    console.info('No deployment outputs file exists');
+    deploy = true;
+  } else {
+    const outStat = await fsp.stat(outPath);
+    if (outStat.mtimeMs < lambdaMTime) {
+      console.info('Source file has changed since last deploy');
       deploy = true;
-    } else {
-      const outStat = await fsp.stat(outPath);
-      if (outStat.mtimeMs < lambdaMTime) {
-        console.info('Source file has changed since last deploy');
-        deploy = true;
-      }
-      const file = await fsp.readFile(outPath);
-      const stacks: Record<string, Stack> = JSON.parse(file.toString());
-      if (!Object.keys(stacks).length) {
-        console.warn('Outputs file has no stacks');
-        deploy = true;
-      }
     }
-  } catch (e) {
-    console.error(`Error statting ${outFilePath}, giving up`);
-    return false;
+    let stacks: string[] = [];
+    try {
+      stacks = await getAllStageStacks(config.dev.stage, config.outDir);
+    } catch (e) {
+      console.info("Couldn't open stage info file");
+      deploy = true;
+    }
+    //Check that all requested stacks have been deployed
+    let deployedStackIds: string[] = [];
+    try {
+      const deployedStacks = await getStacks(outPath);
+      deployedStackIds = [...deployedStacks.values()].map(
+        (stack) => stack.jet.id
+      );
+    } catch (e) {
+      console.warn('Couldnt open stage outputs file');
+      deploy = true;
+    }
+    const undeployed = (config.dev.stacks ?? stacks).filter(
+      (stack) => !deployedStackIds.includes(stack)
+    );
+    if (undeployed.length > 0) {
+      console.warn(`Requested stack(s) ${undeployed.join(', ')} not deployed`);
+      deploy = true;
+    }
   }
   if (deploy) {
     doDeploy(config, configFile);
@@ -48,11 +70,16 @@ export async function deployIfNecessary(
   return deploy;
 }
 
+/** Run cdk deploy on the stacks provided in config
+ *
+ * @param config The config to run against
+ * @param configFile Path to jet configuration file to pass to cdk
+ **/
 export function doDeploy(
   config: BaseConfigWithUserAndCommandStage<'dev'>,
   configFile: string | undefined
 ) {
-  const outPath = outFilePath(config.outDir);
+  const outPath = outFilePath(config.dev.stage, config.outDir);
   runCdk('deploy', {
     cwd: config.projectDir,
     jetOutDir: config.outDir,
@@ -65,8 +92,25 @@ export function doDeploy(
       '-O',
       outPath,
       ...config.dev.deployArgs,
-      stackFilter(config.dev.stage, { user: config.user }),
+      ...stackFilter(config.dev.stage, config.dev.stacks, {
+        user: config.user,
+      }),
     ],
   });
-  writeValues(config.outDir, config.projectDir);
+  writeValues(config.dev.stage, config.outDir, config.projectDir);
+}
+/**
+ * return all the stacks listed in the stage info file
+ * @param stage
+ * @param outDir
+ */
+async function getAllStageStacks(
+  stage: string,
+  outDir: string
+): Promise<string[]> {
+  const infoFile = await fsp.readFile(
+    path.join(outDir, `${stage}.stage.json5`)
+  );
+  const stageData = json5.parse(infoFile.toString());
+  return stageData.stacks;
 }
