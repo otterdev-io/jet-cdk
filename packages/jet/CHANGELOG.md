@@ -1,3 +1,5 @@
+# 0.2.2 - October 4 2021
+- Be more explicit when cdk can't run
 # 0.2.0 - October 3 2021
 - Deploy with minimal jet output information as possible
 - rename `writeValues` to `outputsFile`
