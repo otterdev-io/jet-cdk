@@ -11,10 +11,10 @@ import chalk from 'chalk';
 import { latestWatchedMtime } from './files';
 import { ReInterval } from 'reinterval';
 import { usagePrompt } from './prompt';
-import { getStacks } from '../common/outFile';
-import { ParsedStack } from '../common/types';
+import { getDeployedDevStacks } from '../common/get-deployed-stacks';
 import { outFilePath } from '../../core/run-cdk';
 import { stacksToDev } from '../../core/stacks';
+import { ParsedDeployedDevStack } from '../common/types';
 
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
@@ -46,7 +46,7 @@ export async function runDev(
   const didDeploy = await deployIfNecessary(config, lambdaMTime, configFile);
 
   const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
-  const allStacks = await getStacks(stackOutputsPath);
+  const allStacks = await getDeployedDevStacks(stackOutputsPath);
   const devStacks = await stacksToDev(
     config.dev.stage,
     config.dev.stacks,
@@ -117,7 +117,10 @@ export async function runDev(
 }
 
 //Return the stacks specified in config, out of allStacks
-function filterStacks(stacks: string[], allStacks: Map<string, ParsedStack>) {
+function filterStacks(
+  stacks: string[],
+  allStacks: Map<string, ParsedDeployedDevStack>
+) {
   return new Map(
     [...allStacks.entries()].filter(([name, stack]) =>
       stacks.includes(stack.jet.id)
@@ -126,7 +129,7 @@ function filterStacks(stacks: string[], allStacks: Map<string, ParsedStack>) {
 }
 
 // Print the cfn outputs of the given stacks, hiding jet
-function printStackOutputs(stacks: Map<string, ParsedStack>) {
+function printStackOutputs(stacks: Map<string, ParsedDeployedDevStack>) {
   stacks.forEach((stack, stackName) => {
     console.log();
     console.info(chalk.bold(stackName));

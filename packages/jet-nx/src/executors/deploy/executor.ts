@@ -4,7 +4,7 @@ import { flight } from '@jet-cdk/jet/flight';
 export default async function runExecutor(options: DeployExecutorSchema) {
   try {
     await flight(false, {
-      command: 'dev',
+      command: 'deploy',
       projectDir: options['project-dir'],
       stage: options.stage,
       stacks: options.stacks,

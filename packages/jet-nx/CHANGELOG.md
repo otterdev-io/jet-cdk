@@ -1,3 +1,7 @@
+# 0.2.0 - October 3 2021
+- Update for jet 0.2.0, afterburner 0.2.0
+# 0.1.2 - October 3 2021
+- Fix the deploy executor to actually deploy
 # 0.1.1 - October 3 2021
 - Add esbuild to generated project
 # 0.1.0 - October 3 2021

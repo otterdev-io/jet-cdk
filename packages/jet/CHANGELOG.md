@@ -1,3 +1,9 @@
+# 0.2.0 - October 3 2021
+- Deploy with minimal jet output information as possible
+- rename `writeValues` to `outputsFile`
+- reduce refresh timer to 5s to ease throttling with more functions
+# 0.1.2 - October 3 2021
+- Fix deploy stacks
 # 0.1.1 - October 3 2021
 - Update documentation
 # 0.1.0 - October 3 2021
