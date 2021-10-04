@@ -1,19 +1,14 @@
-import {
-  CfnOutput,
-  CfnResource,
-  Construct,
-  IConstruct,
-  Stack,
-} from '@aws-cdk/core';
+import { CfnOutput, CfnResource, IConstruct, Stack } from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import json5 from 'json5';
 import fsp from 'fs/promises';
-import { WriteValues } from '../flight/commands/common/types';
-
-const keyWriteValues = 'jet:writeValues';
+import { OutputsFile } from '../flight/commands/common/types';
 
 export function jetOutput(scope: Stack) {
   const assemblyOutDir = scope.node.tryGetContext('jet:assembly-out-dir');
+  const outputsStack = scope as unknown as { outputsFiles?: OutputsFile[] };
+
+  //Full outputs in dev mode
   if (scope.node.tryGetContext('jet:dev') && assemblyOutDir) {
     const functions = scope.node
       .findAll()
@@ -39,7 +34,14 @@ export function jetOutput(scope: Stack) {
         id: scope.node.id,
         functions: outputFunctions,
         assemblyOutDir,
-        writeValues: (scope as any)[keyWriteValues],
+        outputsFiles: outputsStack.outputsFiles ?? [],
+      }),
+    });
+    //Only outputsFiles if necessary in deploy mode
+  } else if (scope.node.tryGetContext('jet:jet') && outputsStack.outputsFiles) {
+    new CfnOutput(scope, 'jet', {
+      value: JSON.stringify({
+        outputsFiles: outputsStack.outputsFiles ?? [],
       }),
     });
   }
@@ -55,7 +57,12 @@ function hasCfnResource(
   return (f.node.defaultChild as CfnResource)?.getMetadata != null;
 }
 
-export async function writeValues(scope: Construct, props: WriteValues) {
-  const writeValues: WriteValues[] = (scope as any)[keyWriteValues] ?? [];
-  (scope as any)[keyWriteValues] = [...writeValues, props];
+export function outputsFile(stack: Stack, file: OutputsFile) {
+  const outputsStack = stack as unknown as { outputsFiles?: OutputsFile[] };
+  if (!outputsStack.outputsFiles) {
+    outputsStack.outputsFiles = [];
+  }
+  outputsStack.outputsFiles.push(file);
+  // Mainly to trigger redeploy
+  stack.node.addMetadata('Jet::OutputsFile', file);
 }

@@ -9,7 +9,7 @@ import zip from 'jszip';
 import fsp from 'fs/promises';
 import {
   DeployedFunction,
-  ParsedStack,
+  ParsedDeployedDevStack,
   SynthedFunction,
 } from '../common/types';
 import { tailLogs } from './logs';
@@ -23,7 +23,7 @@ import pMap from 'p-map';
 export async function processStacksLambdas(
   doUpload: boolean,
   config: BaseConfigWithUserAndCommandStage<'dev'>,
-  stacks: Map<string, ParsedStack>
+  stacks: Map<string, ParsedDeployedDevStack>
 ): Promise<ReInterval[]> {
   if (doUpload) {
     runSynth(config);
@@ -43,7 +43,7 @@ export async function processStacksLambdas(
   }
 }
 
-function uploadAndTail(
+async function uploadAndTail(
   stackFunctions: Map<
     string,
     {
@@ -53,23 +53,30 @@ function uploadAndTail(
     }
   >,
   doUpload: boolean
-) {
+): Promise<ReInterval[]> {
   // Some functions seem to not have a name. Ignore those ones
   const devFunctions = [...stackFunctions.values()].filter(({ fn }) => fn.name);
-  return pMap(
+  const intervals = await pMap(
     devFunctions,
     async ({ stackName, assemblyOutDir, fn }) => {
-      if (doUpload) {
-        console.info(`Uploading ${fn.name}`);
-        await upload(stackName, assemblyOutDir, fn);
+      try {
+        if (doUpload) {
+          console.info(`Uploading ${fn.name}`);
+          await upload(stackName, assemblyOutDir, fn);
+        }
+        return [await tailLogs(fn)];
+      } catch (e: any) {
+        console.warn(chalk.bgBlack(chalk.yellow('Error uploading a lambda:')));
+        console.warn(e.message);
+        return [];
       }
-      return tailLogs(fn);
     },
     { concurrency: 1 }
   );
+  return intervals.flatMap((x) => x);
 }
 
-async function getStackFunctions(stacks: Map<string, ParsedStack>) {
+async function getStackFunctions(stacks: Map<string, ParsedDeployedDevStack>) {
   return new Map(
     (
       await pMap(stacks.entries(), async ([stackName, stack]) =>

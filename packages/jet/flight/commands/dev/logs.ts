@@ -7,7 +7,7 @@ import { StandardRetryStrategy } from '@aws-sdk/middleware-retry';
 import { DeployedFunction } from '../common/types';
 import reInterval, { ReInterval } from 'reinterval';
 
-const minRefreshInterval = 1000;
+const minRefreshInterval = 5000;
 const maxRefreshInterval = 60000;
 
 export async function tailLogs(fn: DeployedFunction): Promise<ReInterval> {

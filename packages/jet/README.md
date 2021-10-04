@@ -158,22 +158,24 @@ The default configuration is:
 
 The `stage` and `stacks` settings once defined allow you to provide default stages and stacks for the `dev` and deploy commands, so that you can just run `jet dev` / `jet deploy` to use the defaults.
 
-# Exporting values to a file
-A function `writeValues` is provided in `@jet-cdk/jet/cdk` which allows you export a file containing the provided values, in json, json5, or env format. This is useful when locally running applications, eg a frontend, depend on values from your deployed backend. The file is generated after each deployment, so if you just added it, and your jet is running, press d to deploy again.
+# Exporting deployed properties to a file
+The function `outputsFile` in `@jet-cdk/jet/cdk` allows you to define a file which is exported post-deployment, containing the provided contents, in json, json5, or env format. This is useful when locally running applications, eg a frontend, depend on values from your deployed backend. In this case you can export your backend properties to a file loaded by the frontend.
+
+JSON and JSON5 formats allow for contents of any shape and type. ENV format expects a mapping from variable to a string. If no format is specified, JSON is used.
 
 ```ts
-writeValues(this, {
+outputsFile(this, {
   path: path.join(__dirname, "../../frontend/.env.backend.local"),
-  values: {
+  contents: {
     NEXT_PUBLIC_GRAPHQL_ENDPOINT: api.graphqlUrl,
   },
   format: "env",
 });
 
 //JSON example
-writeValues(this, {
+outputsFile(this, {
   path: path.join(__dirname, "../../frontend/.env.backend.local.json"),
-  values: {
+  contents: {
     graphqlUrl: api.graphqlUrl,
   }
 });

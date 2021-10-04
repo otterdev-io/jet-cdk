@@ -14,7 +14,10 @@ export function runCdk(
     stdio?: child_process.StdioOptions;
   }
 ) {
-  const context = merge({ 'out-dir': pars.jetOutDir }, pars.context ?? {});
+  const context = merge(
+    { jet: true, 'out-dir': pars.jetOutDir },
+    pars.context ?? {}
+  );
   const contextArr = Object.entries(context).flatMap(([k, v]) => [
     '-c',
     `jet:${k}=${v}`,

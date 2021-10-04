@@ -5,10 +5,13 @@ import { outFilePath, runCdk } from '../../core/run-cdk';
 import { stacksToDev, stackFilter } from '../../core/stacks';
 import chalk from 'chalk';
 import cleanDeep from 'clean-deep';
-import { writeValues } from '../common/write-values';
-import { getStacks } from '../common/outFile';
-import path from 'path';
-import json5 from 'json5';
+import { writeOutputsFiles } from '../common/write-outputs-files';
+import { getDeployedStacks } from '../common/get-deployed-stacks';
+import {
+  isDeployedDevStack,
+  isParsedDeployedDevStack,
+  ParsedDeployedDevStack,
+} from '../common/types';
 
 /**  Do a deploy if:
  * - Theres no outputs file
@@ -36,11 +39,11 @@ export async function deployIfNecessary(
       deploy = true;
     }
     //Check that all requested stacks have been deployed
-    let deployedStackIds: string[] = [];
+    let deployedDevStackIds: string[] = [];
     try {
-      const deployedStacks = await getStacks(outPath);
-      deployedStackIds = [...deployedStacks.values()].map(
-        (stack) => stack.jet.id
+      const deployedDevStacks = await getDeployedStacks(outPath);
+      deployedDevStackIds = [...deployedDevStacks.values()].flatMap((stack) =>
+        stack.jet?.id ? [stack.jet.id] : []
       );
     } catch (e) {
       console.info(
@@ -60,10 +63,12 @@ export async function deployIfNecessary(
       deploy = true;
     }
     const undeployed = devStacks.filter(
-      (stack) => !deployedStackIds.includes(stack)
+      (stack) => !deployedDevStackIds.includes(stack)
     );
     if (undeployed.length > 0) {
-      console.warn(`Requested stack(s) ${undeployed.join(', ')} not deployed`);
+      console.warn(
+        `Requested stack(s) ${undeployed.join(', ')} not deployed with dev data`
+      );
       deploy = true;
     }
   }
@@ -106,5 +111,5 @@ export function doDeploy(
       }),
     ],
   });
-  writeValues(config.dev.stage, config.outDir, config.projectDir);
+  writeOutputsFiles(config.dev.stage, config.outDir, config.projectDir);
 }

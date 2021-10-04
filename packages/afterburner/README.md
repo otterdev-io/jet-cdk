@@ -118,3 +118,27 @@ Each type contains a map from the graphql fields to resolvers, similar to the ap
   - Datasource builders for all supported types are supplied in `@jet-cdk/afterburner/appsync/datasources`
   - Or you can specify one yourself, as `DataSourceBuilder = (stack, id) -> DataSource`
 - Or you can supply your own function, as `(DataSourceBuilder, props) -> (typeName, fieldName) -> DataSourceBuilder`
+
+# Cognito
+
+```ts
+import { addTriggers } from "@jet-cdk/afterburner/cognito";
+import nodejs from "@jet-cdk/afterburner/functions/nodejs";
+
+const triggerFns = addTriggers(userPool, {
+  triggers: {
+    postConfirmation: nodejs({
+      entry: "handlers/user/postConfirmation.ts",
+      environment: {
+        TABLE_NAME: userTable.tableName,
+      },
+    }),
+    customMessage: nodejs("handlers/user/customMessage.ts")
+  },
+});
+
+userTable.grantFullAccess(triggerFns.postConfirmation);
+```
+
+`addTriggers` is a helper function for adding triggers to a Cognito UserPool using the same Builder functions as is provided for ApiGateway and AppSync.
+The function accepts a mapping from trigger names to function builders, and returns a similar mapping from function names to the built functions.
