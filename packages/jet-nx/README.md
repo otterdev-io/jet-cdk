@@ -42,5 +42,7 @@ You may also add varying configurations to your workspace.json, running against 
 
 ## Deploy
 ``` sh
-nx jet-deploy my-app --stage=production
+nx deploy my-app --stage=production
 ```
+
+The original cdk `deploy` target is renamed to `cdk-deploy`.

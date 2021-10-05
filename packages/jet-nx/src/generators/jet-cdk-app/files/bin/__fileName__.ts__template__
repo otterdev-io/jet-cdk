@@ -2,13 +2,14 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { <%= className %>Stack } from '../lib/<%= fileName %>-stack';
+import { ApiStack } from '../lib/api-stack';
 import { JetCore, jetStage } from '@jet-cdk/jet/cdk';
 
 const app = new cdk.App();
 
 new JetCore(app, "App", {
   default: jetStage((stage) => {
-    new  <%= className %>Stack(stage, "<%= filename %>");
+    new  <%= className %>Stack(stage, "<%= fileName %>");
     new  ApiStack(stage, "Api");
   }),
 });

@@ -75,6 +75,9 @@ export default async function (
     root: normalizedOptions.projectRoot,
     targets: {
       ...(config.targets ?? {}),
+      ...(config.targets?.deploy
+        ? { 'cdk-deploy': config.targets.deploy }
+        : {}),
       dev: {
         executor: '@jet-cdk/jet-nx:dev',
         options: {
@@ -91,7 +94,7 @@ export default async function (
           'out-dir': normalizedOptions.outDir,
         } as ListStagesExecutorSchema,
       },
-      'jet-deploy': {
+      deploy: {
         executor: '@jet-cdk/jet-nx:deploy',
         options: {
           'project-dir': normalizedOptions.projectRoot,

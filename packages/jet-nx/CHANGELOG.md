@@ -1,3 +1,7 @@
+
+# 0.2.1 - October 5 2021
+- Rename cdk to deploy to cdk-deploy, make jet deploy = deploy
+- Fix template
 # 0.2.0 - October 3 2021
 - Update for jet 0.2.0, afterburner 0.2.0
 # 0.1.2 - October 3 2021
