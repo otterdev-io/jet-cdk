@@ -24,10 +24,9 @@ export function listStages(
       cwd: projectDir,
     }).stdout?.toString() ?? '';
 
-  const items = output
-    .trim()
-    .split('\n')
-    .map((s) => s.match(/[^/]+\/(.+)\/[^/]+/)?.[1])
-    .filter((x) => x);
+  const items = output.match(
+    /^[a-zA-Z0-9-]+\/([a-zA-Z0-9-/]+)\/[a-zA-Z0-9-]+$/gm
+  );
+
   return [...new Set(items)];
 }
