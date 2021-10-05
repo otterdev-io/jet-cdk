@@ -43,7 +43,6 @@ export function runCdk(
       console.error(chalk.redBright(chalk.bgBlack(result.stderr.toString())));
     }
     console.error(chalk.redBright(chalk.bgBlack('Problem running cdk!')));
-    throw new Error("Couldn't run cdk. Do you have it installed?");
   }
   return result;
 }
