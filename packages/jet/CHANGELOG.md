@@ -1,3 +1,6 @@
+
+# 0.2.3 - October 5 2021
+- Better stage detection
 # 0.2.2 - October 4 2021
 - Be more explicit when cdk can't run
 # 0.2.0 - October 3 2021

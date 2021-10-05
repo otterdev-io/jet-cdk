@@ -13,18 +13,21 @@ export function listStages(
   outDir: string,
   configFile: string | undefined
 ) {
-  const items = runCdk('list', {
-    jetOutDir: outDir,
-    context: cleanDeep({
-      'project-dir': projectDir,
-      'config-file': configFile,
-    }),
-    stdio: 'pipe',
-    cwd: projectDir,
-  })
-    .stdout.toString()
+  const output =
+    runCdk('list', {
+      jetOutDir: outDir,
+      context: cleanDeep({
+        'project-dir': projectDir,
+        'config-file': configFile,
+      }),
+      stdio: 'pipe',
+      cwd: projectDir,
+    }).stdout?.toString() ?? '';
+
+  const items = output
     .trim()
     .split('\n')
-    .map((s) => s.match(/.+\/(.+)\/.+/)?.[1]);
+    .map((s) => s.match(/[^/]+\/(.+)\/[^/]+/)?.[1])
+    .filter((x) => x);
   return [...new Set(items)];
 }
