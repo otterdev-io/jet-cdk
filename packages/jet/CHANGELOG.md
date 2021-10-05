@@ -1,3 +1,8 @@
+
+# 0.2.6 - October 5 2021
+- Fix stage listing
+# 0.2.5 - October 5 2021
+- Accidental publish
 # 0.2.4 - October 5 2021
 - Even better stage detection
 # 0.2.3 - October 5 2021

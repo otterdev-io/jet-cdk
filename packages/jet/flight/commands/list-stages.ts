@@ -12,7 +12,7 @@ export function listStages(
   projectDir: string,
   outDir: string,
   configFile: string | undefined
-) {
+): string[] {
   const output =
     runCdk('list', {
       jetOutDir: outDir,
@@ -24,9 +24,9 @@ export function listStages(
       cwd: projectDir,
     }).stdout?.toString() ?? '';
 
-  const items = output.match(
+  const matches = output.matchAll(
     /^[a-zA-Z0-9-]+\/([a-zA-Z0-9-/]+)\/[a-zA-Z0-9-]+$/gm
   );
-
-  return [...new Set(items)];
+  const stages = [...matches].map((m) => m[1]).filter((x) => x);
+  return [...new Set(stages)];
 }
