@@ -1,5 +1,5 @@
 import { Function as LambdaFunction, FunctionProps } from '@aws-cdk/aws-lambda';
-import { Builder } from '../common/lib';
+import { Builder } from '../lib';
 
 /**
  * Create a Builder for a 'Function'

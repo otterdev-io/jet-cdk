@@ -1,5 +1,5 @@
 import { GoFunction, GoFunctionProps } from '@aws-cdk/aws-lambda-go';
-import { Builder } from '../common/lib';
+import { Builder } from '../lib';
 
 /**
  * Props to create a Go function

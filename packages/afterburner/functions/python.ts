@@ -2,7 +2,7 @@ import {
   PythonFunction,
   PythonFunctionProps,
 } from '@aws-cdk/aws-lambda-python';
-import { Builder } from '../common/lib';
+import { Builder } from '../lib';
 
 /**
  * Props to create a Python function
