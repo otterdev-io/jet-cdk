@@ -5,7 +5,7 @@ import {
 } from '@aws-cdk/aws-appsync';
 import { IServerlessCluster } from '@aws-cdk/aws-rds';
 import { ISecret } from '@aws-cdk/aws-secretsmanager';
-import { Builder } from '../../common/lib';
+import { Builder } from '../../lib';
 
 /**
  * Create a builder for a rds datasource

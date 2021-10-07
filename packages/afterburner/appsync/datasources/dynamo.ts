@@ -4,7 +4,7 @@ import {
   GraphqlApi,
 } from '@aws-cdk/aws-appsync';
 import { ITable } from '@aws-cdk/aws-dynamodb';
-import { Builder } from '../../common/lib';
+import { Builder } from '../../lib';
 
 /**
  * Create a builder for a lambda datasource

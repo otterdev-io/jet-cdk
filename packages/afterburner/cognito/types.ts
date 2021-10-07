@@ -1,4 +1,4 @@
-import { Builder } from '../common/lib';
+import { Builder } from '../lib';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { TriggerOpMap } from './op-map';
 

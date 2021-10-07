@@ -4,7 +4,7 @@ import {
   GraphqlApi,
 } from '@aws-cdk/aws-appsync';
 import { IFunction } from '@aws-cdk/aws-lambda';
-import { Builder } from '../../common/lib';
+import { Builder } from '../../lib';
 
 /**
  * Create a builder for a lambda datasource
@@ -28,6 +28,6 @@ export default function lambdaDataSource(
   };
 }
 
-interface LambdaDataSourceWithFunction extends LambdaDataSource {
+export interface LambdaDataSourceWithFunction extends LambdaDataSource {
   lambdaFunction: IFunction;
 }

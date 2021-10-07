@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BaseDataSource, GraphqlApi } from '@aws-cdk/aws-appsync';
-import {
-  DataSourceFields,
-  ResolverBuilder,
-  DataSourceMap,
-  ResolverMap,
-} from './types';
+import { ResolverBuilder, DataSourceMap, ResolverMap } from './types';
 
 /**
  * Route an Appsync api
@@ -14,46 +9,37 @@ import {
  * @returns An object mapping from type to field to handler
  */
 export function setupResolvers<
-  T extends { Query?: ResolverMap; Mutation?: ResolverMap },
-  D extends BaseDataSource
->(
-  api: GraphqlApi,
-  props: {
-    resolvers: T;
-    defaultOptions?: (s: string) => ResolverBuilder<D>;
-  }
-): DataSourceMap<T, D> {
-  const output = {} as DataSourceMap<T, D>;
-  Object.entries(props.resolvers).forEach(([type, typeHandler]) => {
+  T extends { Query?: ResolverMap; Mutation?: ResolverMap }
+>(api: GraphqlApi, resolvers: T): DataSourceMap<T> {
+  const output = {} as DataSourceMap<T>;
+  Object.entries(resolvers).forEach(([type, typeHandler]) => {
     if (typeHandler) {
       Object.entries(typeHandler).forEach(([field, fieldHandler]) => {
         if (fieldHandler) {
           const id = `${type}${field}`;
           //Type of datasource varies by entry
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let dataSource: any;
-          if (typeof fieldHandler === 'string') {
-            if (!props.defaultOptions) {
-              throw new Error(
-                'Need to specify default resolver to use a string spec'
-              );
-            }
-            dataSource = props.defaultOptions(fieldHandler)(type, field)(
-              api,
-              id
-            );
+          const dataSource = fieldHandler(type, field)(api, id);
+          if (!output[type as keyof DataSourceMap<T>]) {
+            // @ts-ignore
+            output[type as keyof DataSourceMap<T>] = { field: dataSource };
           } else {
-            dataSource = fieldHandler(type, field)(api, id);
+            // @ts-ignore
+            output[type as keyof DataSourceMap<T>][field] = dataSource;
           }
-          if (!output[type as keyof DataSourceMap<T, D>]) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            output[type as keyof DataSourceMap<T, D>] = {} as any;
-          }
-          // @ts-ignore
-          output[type as keyof DataSourceMap<T, D>][field] = dataSource;
         }
       });
     }
   });
   return output;
+}
+
+export function resolverTag<DS extends BaseDataSource>(
+  builder: (s: string) => ResolverBuilder<DS>
+): (strings: TemplateStringsArray, ...expr: string[]) => ResolverBuilder<DS> {
+  return (strings, ...expr) => {
+    const str = strings.reduce(
+      (total, str, i) => total + str + (expr[i] ?? '')
+    );
+    return builder(str);
+  };
 }

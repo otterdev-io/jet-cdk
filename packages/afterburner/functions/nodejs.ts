@@ -2,7 +2,7 @@ import {
   NodejsFunction,
   NodejsFunctionProps,
 } from '@aws-cdk/aws-lambda-nodejs';
-import { Builder } from '../common/lib';
+import { Builder } from '../lib';
 
 /**
  *  Props to create a NodeFunction

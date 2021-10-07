@@ -1,6 +1,6 @@
 {
   "name": "@jet-cdk/afterburner",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "peerDependencies": {
     "@aws-cdk/aws-apigatewayv2": "^1.124.0",
     "@aws-cdk/aws-apigatewayv2-authorizers": "^1.124.0",

@@ -4,7 +4,7 @@ import {
   GraphqlApi,
 } from '@aws-cdk/aws-appsync';
 import { IDomain } from '@aws-cdk/aws-elasticsearch';
-import { Builder } from '../../common/lib';
+import { Builder } from '../../lib';
 /**
  * Create a builder for a elasticsearch datasource
  * @param functionBuilder builder for the lambda function

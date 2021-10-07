@@ -3,7 +3,7 @@ import {
   GraphqlApi,
   NoneDataSource,
 } from '@aws-cdk/aws-appsync';
-import { Builder } from '../../common/lib';
+import { Builder } from '../../lib';
 
 /**
  * Create a builder for a none datasource
