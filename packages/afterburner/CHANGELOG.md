@@ -1,3 +1,5 @@
+# 0.2.1 - September 29 2021
+- Make functions available from appsync datasources.
 # 0.2.0 - September 29 2021
 - Add cognito triggers api
 

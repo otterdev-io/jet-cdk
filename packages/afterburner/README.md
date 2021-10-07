@@ -104,7 +104,7 @@ export class TestAppStack extends cdk.Stack {
       // defaultOptions: compose(resolver, lambda, nodejs),
     });
 
-    table.grantReadWriteData(dataSources.Query.putItem.grantPrincipal);
+    table.grantReadWriteData(dataSources.Query.putItem.lambdaFunction.grantPrincipal);
 
     new CfnOutput(this, 'apiUrl', { value: api.graphqlUrl ?? '' });
   }
