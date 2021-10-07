@@ -15,11 +15,19 @@ import { Builder } from '../../common/lib';
 export default function lambdaDataSource(
   functionBuilder: Builder<IFunction>,
   options?: DataSourceOptions
-): Builder<LambdaDataSource, GraphqlApi> {
-  return (api, id) =>
-    api.addLambdaDataSource(
+): Builder<LambdaDataSourceWithFunction, GraphqlApi> {
+  return (api, id) => {
+    const fn = functionBuilder(api.stack, `fn${id}`);
+    const ds = api.addLambdaDataSource(
       `ds${id}`,
-      functionBuilder(api.stack, `fn${id}`),
+      fn,
       options
-    );
+    ) as LambdaDataSourceWithFunction;
+    ds.lambdaFunction = fn;
+    return ds;
+  };
+}
+
+interface LambdaDataSourceWithFunction extends LambdaDataSource {
+  lambdaFunction: IFunction;
 }
