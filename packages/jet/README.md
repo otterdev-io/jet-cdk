@@ -9,10 +9,10 @@ Soar through the Clouds with Jet. Jet CDK is a lightweight toolkit to transform 
 - First class support for `Nx`, with `@jet-cdk/jet-nx`.
 # Comparison with SST
 The 'live cloud development' technique is similar to the style of `SST`, however Jet attempts to take a more minimal approach. Where SST proxyies deployed lambdas to locally running ones, Jet simply watches for source code changes, and redeploys your lambdas using AWS APIs instead of going through a full redploy.
-    - [-] There is a small delay to upload updates, and a ~5 delay of relaying to cloudwatch logs. SST provides instant reloads and logging.
-    - [-] No debugging support. SST provides local debugging.
-    - [+] No extra development infrastructure, as your development deployments are virtually identical to production ones. SST deploys a development stack to support operations.
-    - [+] Minimal code changes from raw CDK. Any function construct should be supported, and pure CDK stacks can be used. This should ease interoperability with 3rd party constructs and cdk extensions like pipelines.
+  - [-] There is a small delay to upload updates, and a ~5 delay of relaying to cloudwatch logs. SST provides instant reloads and logging.
+  - [-] No debugging support. SST provides local debugging.
+  - [+] No extra development infrastructure, as your development deployments are virtually identical to production ones. SST deploys a development stack to support operations.
+  - [+] Minimal code changes from raw CDK. Any function construct should be supported, and pure CDK stacks can be used. This should ease interoperability with 3rd party constructs and cdk extensions like pipelines.
      
 # Install
 Assuming you're in a CDK app:
