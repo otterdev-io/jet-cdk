@@ -21,7 +21,7 @@ export function setupResolvers<
           const dataSource = fieldHandler(type, field)(api, id);
           if (!output[type as keyof DataSourceMap<T>]) {
             // @ts-ignore
-            output[type as keyof DataSourceMap<T>] = { field: dataSource };
+            output[type as keyof DataSourceMap<T>] = { [field]: dataSource };
           } else {
             // @ts-ignore
             output[type as keyof DataSourceMap<T>][field] = dataSource;

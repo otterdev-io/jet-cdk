@@ -1,4 +1,7 @@
-# 0.3.0 - September 29 2021
+
+# 0.3.1 - October 8 2021
+- Fix bug in appsync setup output
+# 0.3.0 - October 8 2021
 - Add template tags for prefab handlers
 - Add tagOf function to make your own tags
 - Remove defaultOptions
