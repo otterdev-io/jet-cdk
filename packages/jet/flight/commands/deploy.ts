@@ -19,7 +19,7 @@ export async function runDeploy(
     args: [
       '-O',
       outPath,
-      ...config.deploy.deployArgs,
+      ...config.deploy.cdkArgs,
       ...stackFilter(config.deploy.stage, config.deploy.stacks, {
         user: config.user,
       }),

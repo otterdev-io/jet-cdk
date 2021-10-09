@@ -1,14 +1,10 @@
 import fsp from 'fs/promises';
 import { watch } from 'chokidar';
 import { BaseConfigWithUserAndCommandStage } from '../../../common/config';
-import { deployIfNecessary, doDeploy } from './deploy';
-import {
-  lambdasNeedUploading,
-  processStacksLambdas,
-} from './process-stacks-lambdas';
+import { doDeploy } from './deploy';
+import { startLoggingLambdas } from './start-logging-lambdas';
 import { emitKeypressEvents } from 'readline';
 import chalk from 'chalk';
-import { latestWatchedMtime } from './files';
 import { ReInterval } from 'reinterval';
 import { usagePrompt } from './prompt';
 import { getDeployedDevStacks } from '../common/get-deployed-stacks';
@@ -19,7 +15,7 @@ import { ParsedDeployedDevStack } from '../common/types';
 /**
  * Dev mode runner. Loops a monitor for files, when one changes,
  * Reuploads lambdas.
- * @param standalone Whether this is running as a standalone
+ * @param standalone Whethe this is running as a standalone
  * @param config Framework configuration
  * @param configFile Path to the config file, for passing to cdk
  */
@@ -36,14 +32,10 @@ export async function runDev(
   fsp.mkdir(config.outDir, { recursive: true });
 
   // Our watcher that monitors for changes to any files, in order to re-upload lambdas
-  const lambdaWatcher = watch(config.dev.watcher.watch, {
+  const fileWatcher = watch(config.dev.watcher.watch, {
     ignored: config.dev.watcher.ignore,
     cwd: config.projectDir,
   });
-
-  // Do an initial deploy if files have changed since last deploy
-  const lambdaMTime = await latestWatchedMtime(lambdaWatcher);
-  const didDeploy = await deployIfNecessary(config, lambdaMTime, configFile);
 
   const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
   const allStacks = await getDeployedDevStacks(stackOutputsPath);
@@ -54,25 +46,24 @@ export async function runDev(
   );
   const stacks = filterStacks(devStacks, allStacks);
   printStackOutputs(stacks);
-  // Re-process lambdas, possibly uploading, then tailing logs
-  const refreshLambdas = async (doUpload: boolean) => {
+  // Do a deploy then log lambda output
+  const deployAndLog = async () => {
     try {
+      console.info(chalk.bold(chalk.blue(chalk.bgBlack('Deploying'))));
+      process.stdin.pause();
+      fileWatcher.off('change', deployAndLog);
       clearTailTimeouts();
-      tailTimeouts = await processStacksLambdas(doUpload, config, stacks);
-      //Touch output file, so that we won't need to redeploy on re-launchbased on these changes
-      await fsp.utimes(stackOutputsPath, new Date(), new Date());
+      doDeploy(config, configFile);
+      tailTimeouts = await startLoggingLambdas(stacks);
       usagePrompt();
+      fileWatcher.on('change', deployAndLog);
+      process.stdin.resume();
     } catch (e) {
       console.error(e);
       console.error(chalk.redBright(chalk.bgBlack('Error refreshing lambdas')));
     }
   };
-  const uploadRefreshLambdas = () => refreshLambdas(true);
-  lambdaWatcher.on('change', uploadRefreshLambdas);
-  await refreshLambdas(
-    !didDeploy &&
-      (await lambdasNeedUploading(config.dev.stage, config.outDir, lambdaMTime))
-  );
+  await deployAndLog();
 
   //Handle pressing 'ctrl-c' or 'x' to exit, and 'd' to deploy
   emitKeypressEvents(process.stdin);
@@ -86,14 +77,7 @@ export async function runDev(
       exit();
     }
     if (!(key?.ctrl ?? false) && key?.name === 'd') {
-      console.info(chalk.bold(chalk.blue(chalk.bgBlack('Deploying'))));
-      process.stdin.pause();
-      lambdaWatcher.off('change', uploadRefreshLambdas);
-      clearTailTimeouts();
-      doDeploy(config, configFile);
-      lambdaWatcher.on('change', uploadRefreshLambdas);
-      await refreshLambdas(false);
-      process.stdin.resume();
+      deployAndLog();
     }
   };
   process.stdin.on('keypress', onKeypress);
@@ -106,8 +90,8 @@ export async function runDev(
         process.exit(0);
       } else {
         process.stdin.off('keypress', onKeypress);
-        lambdaWatcher.off('change', uploadRefreshLambdas);
-        lambdaWatcher.close();
+        fileWatcher.off('change', deployAndLog);
+        fileWatcher.close();
         clearTailTimeouts();
         process.stdin.setRawMode(false);
         resolve();

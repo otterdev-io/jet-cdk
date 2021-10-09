@@ -4,6 +4,5 @@ export interface DevExecutorSchema {
   stacks?: string[];
   config?: string;
   'out-dir'?: string;
-  'synth-args'?: string;
-  'deploy-args'?: string;
+  'cdk-args'?: string;
 }

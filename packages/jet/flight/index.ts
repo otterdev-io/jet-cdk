@@ -80,13 +80,12 @@ async function getMergedConfig(args: Args): Promise<BaseConfigWithUser> {
       dev: {
         stage: args.stage,
         stacks: args.stacks,
-        synthArgs: args.synthArgs,
-        deployArgs: args.deployArgs,
+        cdkArgs: args.cdkArgs,
       },
       deploy: {
         stage: args.stage,
         stacks: args.stacks,
-        deployArgs: args.deployArgs,
+        cdkArgs: args.cdkArgs,
       },
     },
     { undefinedValues: true }
