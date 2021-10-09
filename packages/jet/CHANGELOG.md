@@ -1,4 +1,5 @@
-
+# 0.3.0 - October 10 2021
+- Replace custom lambda uploading code with simple execution of cdk --hotswap
 # 0.2.6 - October 5 2021
 - Fix stage listing
 # 0.2.5 - October 5 2021
