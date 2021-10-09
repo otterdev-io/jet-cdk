@@ -4,5 +4,5 @@ export interface DeployExecutorSchema {
   stacks?: string[];
   config?: string;
   'out-dir'?: string;
-  'deploy-args'?: string;
+  'cdk-args'?: string;
 }

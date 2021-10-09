@@ -10,8 +10,7 @@ export default async function runExecutor(options: DevExecutorSchema) {
       stacks: options.stacks,
       config: options.config,
       outDir: options['out-dir'],
-      synthArgs: options['synth-args']?.split(' '),
-      deployArgs: options['deploy-args']?.split(' '),
+      cdkArgs: options['cdk-args']?.split(' '),
     });
     return {
       success: true,

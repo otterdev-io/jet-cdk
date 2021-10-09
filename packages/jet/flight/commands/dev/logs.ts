@@ -3,7 +3,6 @@ import {
   FilterLogEventsCommand,
   ResourceNotFoundException,
 } from '@aws-sdk/client-cloudwatch-logs';
-import { StandardRetryStrategy } from '@aws-sdk/middleware-retry';
 import { DeployedFunction } from '../common/types';
 import reInterval, { ReInterval } from 'reinterval';
 
@@ -11,9 +10,7 @@ const minRefreshInterval = 5000;
 const maxRefreshInterval = 60000;
 
 export async function tailLogs(fn: DeployedFunction): Promise<ReInterval> {
-  const cw = new CloudWatchLogsClient({
-    retryStrategy: new StandardRetryStrategy(async () => 1),
-  });
+  const cw = new CloudWatchLogsClient({});
   let lastReceivedTimestamp = Date.now();
   let refreshInterval = minRefreshInterval;
   const reInt = reInterval(async () => {

@@ -10,7 +10,7 @@ export default async function runExecutor(options: DeployExecutorSchema) {
       stacks: options.stacks,
       config: options.config,
       outDir: options['out-dir'],
-      deployArgs: options['deploy-args']?.split(' '),
+      cdkArgs: options['cdk-args']?.split(' '),
     });
     return {
       success: true,

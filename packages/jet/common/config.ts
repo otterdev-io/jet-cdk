@@ -21,13 +21,12 @@ export const DefaultConfig = {
       watch: ['lib/**/*'],
       ignore: ['node_modules'],
     },
-    synthArgs: [] as string[],
-    deployArgs: [] as string[],
+    cdkArgs: [] as string[],
   },
   deploy: {
     stage: undefined as string | undefined,
     stacks: undefined as string[] | undefined,
-    deployArgs: [] as string[],
+    cdkArgs: [] as string[],
   },
   projectDir: '.',
 };

@@ -31,7 +31,7 @@
       "description": "Output directory for jet data",
       "alias": "o"
     },
-    "deploy-args": {
+    "cdk-args": {
       "type": "string",
       "description": "Extra arguments to cdk deploy"
     }

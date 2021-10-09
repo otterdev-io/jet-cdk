@@ -1,5 +1,4 @@
 import {
-  App,
   Aspects,
   Construct,
   IAspect,
@@ -22,7 +21,6 @@ export class JetStage extends Stage {
     props?: StageProps
   ) {
     super(scope, id, props);
-    this.node.setContext('jet:assembly-out-dir', this._assemblyBuilder.outdir);
     this.node.setContext('jet:stage', id);
     stacks(this);
     const stackIds = this.node.children

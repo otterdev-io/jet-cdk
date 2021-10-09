@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.33.0",
-    "@aws-sdk/client-lambda": "^3.33.0",
     "@aws-sdk/client-sts": "^3.33.0",
     "@aws-sdk/middleware-retry": "^3.34.0",
     "chalk": "^4.1.2",
@@ -40,7 +39,6 @@
     "deepmerge": "^4.2.2",
     "envfile": "^6.17.0",
     "json5": "^2.2.0",
-    "jszip": "^3.7.1",
     "npm-run-path": "^4.0.1",
     "p-all": "^4.0.0",
     "p-map": "^4.0.0",

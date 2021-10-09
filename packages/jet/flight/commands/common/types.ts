@@ -27,14 +27,9 @@ export function isParsedDeployedDevStack(
 export interface JetOutput {
   id: string;
   functions: DeployedFunction[];
-  assemblyOutDir: string;
   outputsFiles: OutputsFile[];
 }
 
-export interface SynthedFunction {
-  id: string;
-  path: string;
-}
 export interface DeployedFunction {
   id: string;
   name: string;

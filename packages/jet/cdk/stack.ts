@@ -5,11 +5,10 @@ import fsp from 'fs/promises';
 import { OutputsFile } from '../flight/commands/common/types';
 
 export function jetOutput(scope: Stack) {
-  const assemblyOutDir = scope.node.tryGetContext('jet:assembly-out-dir');
   const outputsStack = scope as unknown as { outputsFiles?: OutputsFile[] };
 
   //Full outputs in dev mode
-  if (scope.node.tryGetContext('jet:dev') && assemblyOutDir) {
+  if (scope.node.tryGetContext('jet:dev')) {
     const functions = scope.node
       .findAll()
       .flatMap((c) =>
@@ -19,21 +18,11 @@ export function jetOutput(scope: Stack) {
       id: f.node.id,
       name: f.functionName,
     }));
-    const synthFunctions = functions.map((f) => ({
-      id: f.node.id,
-      path: f.node.defaultChild.getMetadata('aws:asset:path'),
-    }));
-
-    fsp.writeFile(
-      `${assemblyOutDir}/${scope.stackName}.functions.json5`,
-      json5.stringify(synthFunctions, undefined, 2)
-    );
 
     new CfnOutput(scope, 'jet', {
       value: JSON.stringify({
         id: scope.node.id,
         functions: outputFunctions,
-        assemblyOutDir,
         outputsFiles: outputsStack.outputsFiles ?? [],
       }),
     });

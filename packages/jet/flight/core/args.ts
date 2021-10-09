@@ -7,8 +7,7 @@ export type Args = {
   command?: Command;
   stage?: string;
   stacks?: string[];
-  synthArgs?: string[];
-  deployArgs?: string[];
+  cdkArgs?: string[];
   config?: string;
   outDir?: string;
   projectDir?: string;
@@ -26,11 +25,7 @@ export async function setupArgs(): Promise<Args> {
           type: 'array',
           description: 'Stacks to dev against',
         })
-        .option('synth-args', {
-          type: 'array',
-          description: 'Extra arguments to cdk synth',
-        })
-        .option('deploy-args', {
+        .option('cdk-args', {
           type: 'array',
           description: 'Extra arguments to cdk deploy',
         });
@@ -45,7 +40,7 @@ export async function setupArgs(): Promise<Args> {
           type: 'array',
           description: 'Stacks to deploy',
         })
-        .option('deploy-args', {
+        .option('cdk-args', {
           type: 'array',
           description: 'Extra arguments to cdk deploy',
         });
@@ -71,8 +66,7 @@ export async function setupArgs(): Promise<Args> {
     command: args._[0] as Command,
     stage: args.stage,
     stacks: args.stacks as string[],
-    synthArgs: args['synth-args'] as string[],
-    deployArgs: args['deploy-args'] as string[],
+    cdkArgs: args['cdk-args'] as string[],
     config: args.config,
     outDir: args['out-dir'],
     projectDir: args['project-dir'],

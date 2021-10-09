@@ -42,7 +42,9 @@ export function runCdk(
     if (result.stderr) {
       console.error(chalk.redBright(chalk.bgBlack(result.stderr.toString())));
     }
-    console.error(chalk.redBright(chalk.bgBlack('Problem running cdk!')));
+    console.error(
+      chalk.bold(chalk.redBright(chalk.bgBlack('Problem running cdk!')))
+    );
   }
   return result;
 }

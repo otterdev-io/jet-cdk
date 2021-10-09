@@ -8,7 +8,7 @@
     "@otterdev/nx-cdk": "^0.0.14"
   },
   "peerDependencies": {
-    "@jet-cdk/jet": "~0.2.0"
+    "@jet-cdk/jet": "~0.3.0"
   },
   "repository": {
     "type": "git",
