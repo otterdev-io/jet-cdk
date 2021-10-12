@@ -1,3 +1,5 @@
+# 0.3.1 - October 12 2021
+- Fix starting up clean
 # 0.3.0 - October 10 2021
 - Replace custom lambda uploading code with simple execution of cdk --hotswap
 # 0.2.6 - October 5 2021

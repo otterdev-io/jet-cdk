@@ -37,15 +37,11 @@ export async function runDev(
     cwd: config.projectDir,
   });
 
-  const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
-  const allStacks = await getDeployedDevStacks(stackOutputsPath);
   const devStacks = await stacksToDev(
     config.dev.stage,
     config.dev.stacks,
     config.outDir
   );
-  const stacks = filterStacks(devStacks, allStacks);
-  printStackOutputs(stacks);
   // Do a deploy then log lambda output
   const deployAndLog = async () => {
     try {
@@ -54,6 +50,10 @@ export async function runDev(
       fileWatcher.off('change', deployAndLog);
       clearTailTimeouts();
       doDeploy(config, configFile);
+      const stackOutputsPath = outFilePath(config.dev.stage, config.outDir);
+      const allStacks = await getDeployedDevStacks(stackOutputsPath);
+      const stacks = filterStacks(devStacks, allStacks);
+      printStackOutputs(stacks);
       tailTimeouts = await startLoggingLambdas(stacks);
       usagePrompt();
       fileWatcher.on('change', deployAndLog);
