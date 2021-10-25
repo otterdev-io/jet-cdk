@@ -111,6 +111,9 @@ export default async function (
     {
       '@jet-cdk/jet': versions.jet,
       '@jet-cdk/afterburner': versions.afterburner,
+      '@aws-cdk/aws-apigatewayv2': versions.cdk,
+      '@aws-cdk/aws-apigatewayv2-integrations': versions.cdk,
+      '@aws-cdk/aws-lambda-nodejs': versions.cdk,
     },
     {
       '@types/aws-lambda': versions.typesAwsLambda,

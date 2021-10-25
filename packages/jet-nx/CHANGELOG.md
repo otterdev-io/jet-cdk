@@ -1,3 +1,5 @@
+# 0.2.3 - October 8 2021
+- Add cdk dependencies to jet app generator
 # 0.2.2 - October 8 2021
 - Update versions
 # 0.2.1 - October 5 2021

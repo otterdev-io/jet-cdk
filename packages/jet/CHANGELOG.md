@@ -1,3 +1,5 @@
+# 0.3.2 - October 12 2021
+- Add --require-approval never to dev deploys
 # 0.3.1 - October 12 2021
 - Fix starting up clean
 # 0.3.0 - October 10 2021

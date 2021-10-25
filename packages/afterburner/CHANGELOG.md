@@ -1,4 +1,6 @@
 
+# 0.3.2 - October 26 2021
+- Fix bug in template string concatenation
 # 0.3.1 - October 8 2021
 - Fix bug in appsync setup output
 # 0.3.0 - October 8 2021

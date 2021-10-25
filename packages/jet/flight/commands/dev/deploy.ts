@@ -24,6 +24,8 @@ export function doDeploy(
     }),
     args: [
       '--hotswap',
+      '--require-approval',
+      'never',
       '-O',
       outPath,
       ...config.dev.cdkArgs,
