@@ -44,6 +44,12 @@ The routing api allows you to reate mappings from paths, to methods, to a handle
 If you find you are using a certain configuration of lambda handler commonly, you can turn it into a tag with `tagOf`, allowing you to keep your routing syntax clean.
 
 ## Quick start
+Be sure to install:
+- @aws-cdk/aws-apigatewayv2
+- @aws-cdk/aws-apigatewayv2-integrations
+- @aws-cdk/aws-apigatewayv2-authorizers
+- Any lambda handler packages, eg @aws-cdk/aws-lambda-nodejs
+
 A minimal rest API :
 
 ```ts
@@ -221,6 +227,11 @@ export class TestAppStack extends cdk.Stack {
 
 # Appsync
 ## Quick start
+Make sure to install:
+Be sure to install:
+- @aws-cdk/aws-appsyc
+- Any lambda handler packages, eg @aws-cdk/aws-lambda-nodejs
+
 The appsync api is very similar to the api gateway one:
 
 

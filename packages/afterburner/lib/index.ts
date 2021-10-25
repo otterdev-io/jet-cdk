@@ -11,7 +11,8 @@ export function tagOf<B>(
 ): (strings: TemplateStringsArray, ...expr: string[]) => B {
   return (strings, ...expr) => {
     const str = strings.reduce(
-      (total, str, i) => total + str + (expr[i] ?? '')
+      (total, str, i) => total + str + (expr[i] ?? ''),
+      ''
     );
     return builder(str);
   };
