@@ -1,3 +1,5 @@
+# 0.3.3 - November 4 2021
+- Expose built stages as 'stages' property of JetCore
 # 0.3.2 - October 12 2021
 - Add --require-approval never to dev deploys
 # 0.3.1 - October 12 2021
