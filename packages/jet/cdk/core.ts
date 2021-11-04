@@ -5,12 +5,9 @@ import {
   writePersonalConfig,
 } from '../common/config';
 
-export class JetCore extends Stage {
-  constructor(
-    scope: Construct,
-    appId: string,
-    stages: Record<string, StageBuilder>
-  ) {
+export class JetCore<S extends Record<string, StageBuilder>> extends Stage {
+  public stages: Record<keyof S, Stage>;
+  constructor(scope: Construct, appId: string, stages: S) {
     super(scope, appId);
     //Add a context override just in case it is so desired
     const projectDir = this.node.tryGetContext('jet:project-dir');
@@ -23,8 +20,9 @@ export class JetCore extends Stage {
       user = getUsernameFromOS();
       writePersonalConfig(user, projectDir);
     }
+    this.stages = {} as Record<keyof S, Stage>;
     Object.entries(stages).forEach(([id, stage]) => {
-      stage(this, id.replace('{user}', user));
+      this.stages[id as keyof S] = stage(this, id.replace('{user}', user));
     });
   }
 }
