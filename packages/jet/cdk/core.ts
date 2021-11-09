@@ -1,11 +1,11 @@
-import { Construct, Stage } from '@aws-cdk/core';
+import { Construct, Stack, Stage } from '@aws-cdk/core';
 import {
   getUsernameFromOS,
   loadConfig,
   writePersonalConfig,
 } from '../common/config';
 
-export class JetCore<S extends Record<string, StageBuilder>> extends Stage {
+export class JetCore<S extends Record<string, StageBuilder>> extends Stack {
   public stages: Record<keyof S, Stage>;
   constructor(scope: Construct, appId: string, stages: S) {
     super(scope, appId);

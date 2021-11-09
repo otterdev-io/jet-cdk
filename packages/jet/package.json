@@ -1,6 +1,6 @@
 {
   "name": "@jet-cdk/jet",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "bin": {
     "jet": "./jet.js"
   },
