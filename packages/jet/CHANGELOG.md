@@ -1,3 +1,5 @@
+# 0.3.4 - November 4 2021
+- Make JetCore a stack so it can be used with cdk pipelines
 # 0.3.3 - November 4 2021
 - Expose built stages as 'stages' property of JetCore
 # 0.3.2 - October 12 2021
