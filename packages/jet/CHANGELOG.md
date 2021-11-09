@@ -1,3 +1,5 @@
+# 0.3.5 - November 4 2021
+- Make JetCore a stage again, so it prefixes stack names
 # 0.3.4 - November 4 2021
 - Make JetCore a stack so it can be used with cdk pipelines
 # 0.3.3 - November 4 2021
