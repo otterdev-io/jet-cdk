@@ -1,3 +1,5 @@
+# 0.3.3 - October 26 2021
+- Add authorization-scoped helper
 
 # 0.3.2 - October 26 2021
 - Fix bug in template string concatenation
