@@ -24,7 +24,11 @@ export default function lambdaAuthorizer<T extends IHttpRouteIntegration>(
 ) => Builder<RouteOptions<T, HttpLambdaAuthorizer>> {
   return (routeOptions) => (scope, id) => {
     const handler = props.handler(scope, `fn${id}`);
-    const builtProps = { ...props, handler };
+    const builtProps: HttpLambdaAuthorizerProps = {
+      ...props,
+      handler,
+      authorizerName: `${id}-authorizer`,
+    };
     const authorizer = new HttpLambdaAuthorizer(
       builtProps
     ) as HttpLambdaAuthorizerWithHandler;
