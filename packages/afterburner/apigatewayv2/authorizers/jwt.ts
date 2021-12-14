@@ -8,20 +8,21 @@ import {
 } from '@aws-cdk/aws-apigatewayv2-authorizers';
 import { Builder } from '../../lib';
 import { RouteOptions } from '../types';
+import { withOptions } from '../with-options';
 /**
  * A builder for jwt authorizer
  * @param props authorizer props
  * @returns RouteOptions builder
  */
 export default function jwtAuthorizer<T extends IHttpRouteIntegration>(
-  props: HttpJwtAuthorizerProps,
-  authorizationScopes?: string[]
+  props: HttpJwtAuthorizerProps
 ): (
   routeOptions: Builder<RouteOptions<T, IHttpRouteAuthorizer>>
 ) => Builder<RouteOptions<T, HttpJwtAuthorizer>> {
-  return (routeOptions) => (scope, id) => ({
-    ...routeOptions(scope, id),
-    authorizer: new HttpJwtAuthorizer(props),
-    authorizationScopes,
-  });
+  return withOptions((_scope, id) => ({
+    authorizer: new HttpJwtAuthorizer({
+      authorizerName: `${id}-authorizer`,
+      ...props,
+    }),
+  }));
 }

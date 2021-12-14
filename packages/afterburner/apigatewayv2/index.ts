@@ -1,2 +1,2 @@
 export * from './route';
-export * from './authorizers/lib';
+export * from './with-options';

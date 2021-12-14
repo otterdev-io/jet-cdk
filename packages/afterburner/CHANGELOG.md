@@ -1,3 +1,6 @@
+# 0.3.4 - October 26 2021
+- Remove authorized-scoped, add withOptions
+- Name authorizers
 # 0.3.3 - October 26 2021
 - Add authorization-scoped helper
 
